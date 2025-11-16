@@ -1,0 +1,139 @@
+
+[  
+
+
+
+
+
+
+
+    
+  {
+    "id": "noticia1694780000014",
+    "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco",
+    "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos en su domicilio de Temixco, Morelos. La Fiscalía estatal ha abierto una investigación. Ochoa, originario de Mazatlán, Sinaloa, había sido señalado en varios volantes por su presunta conexión con el Cártel de Sinaloa, específicamente con la facción de 'Los Chapitos'. Reportes recientes indican que la muerte del influencer, que era conocido por su contenido en redes sociales y por una entrevista reciente con la periodista Adela Micha, ha generado especulaciones sobre un ajuste de cuentas. La familia de la víctima no ha emitido una declaración oficial sobre lo ocurrido.",
+    "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg",
+    "categoria": "policía",
+    "fecha": "2025-08-17",
+    "ciudad": "Atizapán",
+    "autor": "Javier Huerta Martinez",
+    "logo_cuadrado": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "logo_horizontal": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "destacada": false
+  },
+  {
+    "id": "noticia1694780000015",
+    "titulo": "Baches afectan casi el 80 % del Valle de México, según denunciantes",
+    "resumen": "Denuncias ciudadanas, apoyadas por imágenes y videos, revelan que los baches se han convertido en un problema crítico y generalizado en el Valle de México, afectando aproximadamente el 80% de las vialidades. Municipios como Ecatepec y Nezahualcóyotl, así como diversas alcaldías de la Ciudad de México, reportan un aumento en la cantidad de hoyos en sus calles. Este deterioro vial no solo causa daños mecánicos a los vehículos, sino que también genera un gran descontento entre los habitantes. A pesar de los programas de bacheo y las aplicaciones de reporte, muchos residentes señalan que las reparaciones son insuficientes y de baja calidad, o que simplemente no se realizan a tiempo, dejando las calles en un estado deplorable.",
+    "imagen": "https://i.postimg.cc/xdr6Ct7j/FB-IMG-1755466516879.jpg",
+    "categoria": "infraestructura",
+    "fecha": "2025-08-17",
+    "ciudad": "Nacional",
+    "autor": "Javier Huerta Martinez",
+    "logo_cuadrado": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "logo_horizontal": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "destacada": false
+  },
+  {
+    "id": "noticia1694780000016",
+    "titulo": "Familia de AMLO en el foco mediático tras rumores de mudanza presidencial",
+    "resumen": "Versiones sin confirmar, que circulan principalmente en redes sociales, han desatado una ola de especulaciones sobre una supuesta mudanza de la familia del expresidente Andrés Manuel López Obrador. Los rumores han captado la atención mediática y han generado debates sobre la vida privada de la familia presidencial. Algunos informes sugieren que la familia podría estar planificando una mudanza al extranjero, posiblemente a España, lo que ha revivido discusiones sobre la seguridad y los movimientos del exmandatario y sus familiares. Hasta el momento, no se ha emitido ninguna declaración oficial que confirme o desmienta estos rumores.",
+    "imagen": "https://i.postimg.cc/sX5dxMKq/f3eed-16-08-2025-bety-1.jpg",
+    "categoria": "política",
+    "fecha": "2025-08-17",
+    "ciudad": "Nacional",
+    "autor": "Javier Huerta Martinez",
+    "logo_cuadrado": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "logo_horizontal": "https://i.postimg.cc/jSpCFk3b/FB-IMG-1755480562829.jpg",
+    "destacada": true
+  },
+
+    
+    
+    
+    
+    {
+    "id":"noticia1694466160011",
+    "titulo": "🚨 México se entere qué: Rescatan a 15 personas atrapadas en Teleférico de Torreón",
+    "resumen": "Momentos de tensión se vivieron en Torreón, Coahuila, cuando una falla mecánica dejó varadas a 15 personas en las góndolas del teleférico de la ciudad. Elementos de Protección Civil y bomberos realizaron un impresionante operativo de rescate que duró varias horas. Todos los tripulantes fueron puestos a salvo sin lesiones graves, aunque algunos presentaron crisis nerviosa. El incidente ha desatado debate en redes sociales sobre la seguridad de este tipo de transportes turísticos en México.",
+    "imagen": "https://i.postimg.cc/d08j8525/telefericotorreonsl-312b03dd-focus-0-0-1200-600.webp",
+    "categoria": "sucesos",
+    "fecha": "2025-08-17",
+    "ciudad":"Nacional"
+  },
+
+  {
+    "id":"noticia1694466160012",
+    "titulo": "🔥 México se entere qué: Incendio arrasa mercado en Monterrey",
+    "resumen": "Un fuerte incendio consumió gran parte de un mercado popular en Monterrey durante la madrugada. Testigos relataron que las llamas se propagaron con rapidez debido a materiales inflamables en los locales. Bomberos de varios municipios llegaron para sofocar el siniestro, que dejó pérdidas millonarias y al menos 40 locales afectados. Aunque no se reportaron víctimas mortales, el hecho ha encendido la indignación ciudadana ante la falta de medidas de prevención y control en mercados municipales.",
+    "categoria": "sociedad",
+        "imagen": "https://i.postimg.cc/J4nx9c8h/incendio-consume-nueve-locales-en-un-mercado-de-monterrey-2496html-incendio-nljpg-8123html-f0dbfbc7.webp",
+    "fecha": "2025-08-17",
+    "ciudad":"Nacional"
+  },
+  
+  {
+    "id":"noticia1694466160013",
+    "titulo": "🐊 México se entere qué: Avistan cocodrilo en playa de Acapulco",
+    "resumen": "Turistas y locales quedaron impactados al ver un cocodrilo nadando cerca de la orilla en la playa de Puerto Marqués, en Acapulco. Autoridades ambientales acudieron al lugar para intentar capturar al animal y reubicarlo en un área protegida. El hecho generó alarma, pero también memes y comentarios virales en redes sociales, donde muchos recordaron que este no es el primer avistamiento de cocodrilos en zonas turísticas de Guerrero. La recomendación oficial fue evitar nadar en esa área hasta nuevo aviso.",
+        "imagen": "",
+    "categoria": "naturaleza",
+    "fecha": "2025-08-17",
+    "ciudad":"Nacional",
+    "destacada":true
+  },
+
+
+  
+  
+    {
+    "id": "noticia1694466160006",
+    "titulo": "NOTICIA DE ULTIMA HORA Evacuación y caos en la Línea 2 del Metro de la Ciudad de México tras incidente en estación Pino Suárez ",
+    "resumen": "Las autoridades del Metro trabajan para restablecer el servicio a la normalidad lo antes posible. Mientras tanto, se recomienda a los usuarios de la Línea 2 tomar precauciones y buscar vías alternas para sus traslados",
+    "imagen": "https://i.postimg.cc/VkVwzprt/FB-IMG-1755219895317.jpg",
+    "categoria": "Seguridad",
+    "ciudad": "Atizapán",
+    "fecha": "2025-08-12",
+    "destacada": true
+  },
+  {
+    "id": "noticia1694466160007",
+    "titulo": "México Entrega a 26 Criminales de Alto Perfil a Estados Unidos",
+    "resumen": "México extraditó a 26 presuntos criminales, incluyendo a Servando Gómez 'La Tuta' y Abigael González Valencia, a EE. UU. La presidenta Sheinbaum fue elogiada por su cooperación contra el crimen organizado.",
+    "imagen": "https://i.postimg.cc/DzgczqyG/mexico-entrega-26-reos-criminales-eeuu-768x512.jpg",
+    "categoria": "Seguridad",
+    "ciudad": "Nacional",
+    "fecha": "2025-08-13",
+    "destacada": false
+  },
+  {
+    "id": "noticia1694466160008",
+    "titulo": "EE. UU. Actualiza Alerta de Viaje para México",
+    "resumen": "El Departamento de Estado de EE. UU. emitió una alerta de Nivel 2, recomendando no viajar a seis estados y reconsiderar viajes a otros ocho, incluyendo Ciudad de México.",
+    "imagen": "https://i.postimg.cc/sx8mrsf0/20250306-donald-trump-claudia-sheinbaum-20250504010338317.jpg",
+    "categoria": "Seguridad",
+    "ciudad": "Nacional",
+    "fecha": "2025-08-13",
+    "destacada": false
+  },
+  {
+    "id": "noticia1694466160009",
+    "titulo": "Lluvias Fuertes por Monzón Mexicano",
+    "resumen": "El Servicio Meteorológico Nacional pronostica lluvias fuertes, granizadas e inundaciones en varias regiones de México debido al Monzón Mexicano.",
+    "imagen": "https://i.postimg.cc/rmVQGfYg/f608x342-228820-258543-5325.jpg",
+    "categoria": "Clima",
+    "ciudad": "Nacional",
+    "fecha": "2025-08-13",
+    "destacada": false
+  },
+  {
+    "id": "noticia1694466160010",
+    "titulo": "México en Alerta por Alta Sismicidad",
+    "resumen": "México, ubicado sobre cinco placas tectónicas, sigue registrando actividad sísmica constante. No se reportan sismos significativos hoy, pero se recomienda estar preparados.",
+    "imagen": "https://i.postimg.cc/MHrPp155/por-1200-x-630-px-2025-03-14-T212700-262-768x403.png",
+    "categoria": "Seguridad",
+    "ciudad": "Nacional",
+    "fecha": "2025-08-13",
+    "destacada": false
+  }
+]
