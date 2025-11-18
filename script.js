@@ -1,4 +1,4 @@
-// Funciones para escapar caracteres especiales de una cadena HTML
+/ Funciones para escapar caracteres especiales de una cadena HTML
 function escapeHtml(text) {
   if (!text) return '';
   return text.replace(/[&<>"']/g, function(match) {
