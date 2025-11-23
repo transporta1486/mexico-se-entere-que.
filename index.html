@@ -5,12 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>México Se Enteré Qué | Noticias de Atizapán, Naucalpan, Izcalli y más</title>
     
-    <link rel="stylesheet" href="styles.css" />
-    
+    <!-- Enlace a Google Fonts para el estilo moderno -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     
+    <!-- ENLACE AL ARCHIVO CSS (Asegúrate de que este path sea correcto en tu GitHub) -->
+    <!-- <link rel="stylesheet" href="styles.css"> -->
+    
+    <!-- Google Analytics (Mantenido) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -18,94 +21,24 @@
       gtag('js', new Date());
       gtag('config', 'G-Q3ZL4VNDPW');
     </script>
-    
-    <style>
-      /* Estilos básicos para el banner de la app y los anuncios. Idealmente, irían en styles.css */
-      .app-download-bar {
-        background-color: #333; /* Color de fondo oscuro */
-        color: white;
-        padding: 10px 0;
-        text-align: center;
-        position: sticky; /* Fijo en la parte superior */
-        top: 0;
-        z-index: 1000; /* Asegura que esté por encima de otros elementos */
-        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        gap: 15px;
-        flex-wrap: wrap;
-      }
-      .app-download-bar p {
-        margin: 0;
-        font-weight: 600;
-        font-size: 1.1em;
-      }
-      .app-download-bar a {
-        background-color: #f44336; /* Color de botón llamativo */
-        color: white;
-        text-decoration: none;
-        padding: 8px 15px;
-        border-radius: 5px;
-        transition: background-color 0.3s;
-      }
-      .app-download-bar a:hover {
-        background-color: #d32f2f;
-      }
-      .sponsored-ads {
-        padding: 20px 0;
-        text-align: center;
-      }
-      .ad-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        max-width: 1200px;
-        margin: 0 auto;
-      }
-      .ad-card {
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        overflow: hidden;
-        text-align: center;
-        transition: transform 0.3s;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-      }
-      .ad-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 6px 10px rgba(0,0,0,0.15);
-      }
-      .ad-card img {
-        width: 100%;
-        height: auto;
-        display: block;
-        aspect-ratio: 16 / 9; /* Para mantener proporción en todos los anuncios */
-        object-fit: cover;
-      }
-      .ad-card h4 {
-        margin: 10px 0 5px;
-        color: #f44336;
-        font-size: 1.2em;
-      }
-      .ad-card p {
-        padding: 0 10px 10px;
-        margin: 0;
-        font-size: 0.9em;
-      }
-    </style>
 </head>
 <body>
     
+    <!-- BANNER DE DESCARGA DE APP (Siempre visible, fixed top) -->
     <div class="app-download-bar">
-        <p>¡Descarga nuestra App de Noticias y lleva **México Se Enteré Qué** en tu bolsillo!</p>
-        <a href="#" target="_blank" rel="noopener noreferrer">📲 Descargar Ahora</a>
+        <p>¡Descarga nuestra App de Noticias y lleva México Se Enteré Qué en tu bolsillo!</p>
+        <a href="#" target="_blank" rel="noopener noreferrer">📲 Descargar App</a>
     </div>
 
     <header>
       <div class="logo"><h1>México Se Enteré Qué</h1></div>
+      
+      <!-- Botón de Hamburguesa (visible solo en móvil) -->
       <button class="menu-toggle" aria-label="Abrir menú" onclick="toggleMenu()">
         <span></span><span></span><span></span>
       </button>
+      
+      <!-- Navegación: ID necesario para el JS (nav.open) -->
       <nav id="nav-menu">
         <ul>
           <li><a href="index.html">Inicio</a></li>
@@ -116,8 +49,12 @@
           <li><a href="cuatitlan-izcalli.html">Izcalli</a></li>
         </ul>
       </nav>
+      
+      <!-- Barra de Búsqueda -->
       <div class="search-bar">
+        <!-- Botón de Lupa (visible en móvil, oculta en desktop) -->
         <button class="search-toggle" aria-label="Mostrar búsqueda" onclick="toggleSearch()">🔍</button>
+        <!-- Contenedor de búsqueda: ID necesario para el JS (search-input.visible) -->
         <div class="search-input" id="search-input">
           <input type="text" id="search" placeholder="Buscar noticias..." />
           <button onclick="searchNews()">🔍</button>
@@ -128,21 +65,20 @@
     <main>
       <section class="hero">
         <h2>Noticias Destacadas</h2>
+        <!-- Carrusel de Noticias -->
         <div class="carousel">
-          <div class="carousel-inner">
-            </div>
+          <div class="carousel-inner" style="min-height: 200px; text-align: center; padding: 20px;">
+            <p>Aquí irá un carrusel dinámico de noticias principales.</p>
+          </div>
+          <!-- Botones llaman a moveCarousel() del JS -->
           <button class="carousel-prev" onclick="moveCarousel(-1)">❮</button>
           <button class="carousel-next" onclick="moveCarousel(1)">❯</button>
         </div>
       </section>
 
       <section class="ad-section">
-        <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-        data-ad-slot="1234567890"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
+        <!-- Bloque AdSense - Placeholder -->
+        <p style="text-align: center; color: #777; font-style: italic; border: 1px dashed #ccc; padding: 15px; background: white;">[Espacio para Anuncio 1: 320x100 o Responsive]</p>
       </section>
 
       <section class="categories">
@@ -159,32 +95,33 @@
         </div>
       </section>
       
+      <!-- SECCIÓN DE ANUNCIOS PATROCINADOS (Usa clases ad-grid y ad-card para el estilo moderno) -->
       <section class="sponsored-ads">
-          <h2>⭐ Anuncios y Servicios Destacados ⭐</h2>
+          <h2>⭐ Anuncios y Servicios Locales ⭐</h2>
           <div class="ad-grid">
               
-              <a href="https://www.manzaboom.com" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="placeholder-manzaboom.jpg" alt="Manzaboom - Tecnología y gadgets">
-                  <h4>Manzaboom.com</h4>
-                  <p>¡Lo último en tecnología y gadgets! Descubre las mejores ofertas.</p>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/546E7A/FFFFFF?text=Tech" alt="Tecnología y gadgets">
+                  <h4>Gadgets Atizapán</h4>
+                  <p>Lo último en tecnología con entrega inmediata.</p>
               </a>
               
-              <a href="https://www.mudanzas-en-mexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="placeholder-mudanzas.jpg" alt="Mudanzas en México - Servicio profesional">
-                  <h4>Mudanzas-en-Mexico.com</h4>
-                  <p>Tu mudanza fácil y segura. Pide tu cotización sin compromiso.</p>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/8D6E63/FFFFFF?text=Mudanzas" alt="Mudanzas en México">
+                  <h4>Mudanzas Seguras Naucalpan</h4>
+                  <p>Servicio profesional y económico.</p>
               </a>
               
-              <a href="https://www.tacosdecanastaenmexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="placeholder-tacos.jpg" alt="Tacos de Canasta en México - ¡El sabor de México!">
-                  <h4>Tacos de Canasta en México.com</h4>
-                  <p>Auténticos tacos de canasta para tu evento. ¡Sabor garantizado!</p>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/FFB300/333333?text=Comida" alt="Tacos de Canasta">
+                  <h4>Tacos El Güero</h4>
+                  <p>El mejor sabor para tus fiestas en Izcalli.</p>
               </a>
               
-              <a href="https://www.lexfortis.legal" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="placeholder-lexfortis.jpg" alt="Lex Fortis Legal - Asesoría Jurídica">
-                  <h4>LexFortis.legal</h4>
-                  <p>Asesoría legal experta y confiable para empresas y particulares.</p>
+              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/3F51B5/FFFFFF?text=Legal" alt="Asesoría Jurídica">
+                  <h4>Abogados Fortis</h4>
+                  <p>Asesoría legal experta en el Estado de México.</p>
               </a>
               
           </div>
@@ -192,17 +129,19 @@
       
       <section class="latest-news">
         <h2>Últimas Noticias</h2>
+        <!-- Contenedor con news-grid e ID para el contenido dinámico -->
         <div class="news-grid" id="news-container">
+            <!-- Ejemplos de Noticias para la demostración del grid -->
+            <p>🔴 NOTICIA: Choque en la López Mateos genera tráfico intenso cerca de Galerías.</p>
+            <p>🟢 POLÍTICA: Aprueban nuevo presupuesto para infraestructura en Tlalnepantla.</p>
+            <p>🚨 SEGURIDAD: Desmantelan banda de robo a casa habitación en Naucalpan.</p>
+            <p>📣 SOCIEDAD: Anuncian festival gastronómico de fin de año en Cuautitlán Izcalli.</p>
           </div>
       </section>
 
       <section class="ad-section">
-        <ins class="adsbygoogle"
-        style="display:block"
-        data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-        data-ad-slot="9876543210"
-        data-ad-format="auto"
-        data-full-width-responsive="true"></ins>
+        <!-- Bloque AdSense - Placeholder -->
+        <p style="text-align: center; color: #777; font-style: italic; border: 1px dashed #ccc; padding: 15px; background: white;">[Espacio para Anuncio 2: 300x250 o Responsive]</p>
       </section>
     </main>
 
@@ -217,42 +156,124 @@
         <a href="privacidad.html">Política de Privacidad</a> ·
         <a href="terminos.html">Aviso Legal y Términos</a> ·
         <a href="cookies.html">Política de Cookies</a> ·
+        <!-- Botón llama a openCookieBanner() del JS -->
         <button class="cookie-config-btn" onclick="openCookieBanner()">Configurar cookies</button>
       </div>
     </footer>
 
+    <!-- BANNER DE COOKIES (ID necesario para el JS) -->
     <div id="cookie-banner" class="cookie-banner" style="display:none;">
       <div class="cookie-content">
         <p>
-          Usamos cookies para mejorar tu experiencia y, con tu consentimiento, mostrar anuncios (AdSense). 
+          Usamos cookies para mejorar tu experiencia y, con tu consentimiento, mostrar anuncios. 
           Puedes aceptar o rechazar. <a href="cookies.html">Más info</a>.
         </p>
         <div class="cookie-actions">
+          <!-- IDs necesarios para el JS -->
           <button id="accept-cookies" class="btn-accept">Aceptar</button>
           <button id="reject-cookies" class="btn-reject">Rechazar</button>
         </div>
       </div>
     </div>
 
-    <div id="app-modal" class="app-modal" style="display:none;">
-      <div class="app-modal-content">
-        <button class="close-btn" onclick="hideAppModal()">×</button>
-        <h3>📰 ¡Lleva las noticias contigo!</h3>
-        <p>Descarga la aplicación oficial de **México Se Enteré Qué** para recibir las últimas noticias de Atizapán, Naucalpan e Izcalli directamente en tu celular.</p>
-        <a href="#" class="btn-download btn-accept" target="_blank">Descargar App (Android / iOS)</a>
-      </div>
-    </div>
-    
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+    <!-- 
+        =======================================================
+        LÓGICA JAVASCRIPT: INCLUIDA AQUÍ PARA PRUEBAS RÁPIDAS
+        (Si usas un archivo 'script.js' separado, solo necesitas: <script src="script.js"></script>)
+        =======================================================
+    -->
     <script>
-      // Este script ejecuta los bloques de AdSense una vez que se carga la página o se aceptan cookies
-      (function() {
-          if(window.adsbygoogle && window.adsbygoogle.loaded) {
-              window.adsbygoogle.push({});
-          }
-      })();
-    </script>
+        /**
+         * Maneja la apertura y cierre del menú de navegación lateral en móvil.
+         */
+        function toggleMenu() {
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.toggle('open');
+            
+            // Cierra la búsqueda si el menú se abre
+            const searchInput = document.getElementById('search-input');
+            if (window.innerWidth < 768) {
+                searchInput.classList.remove('visible');
+            }
+        }
 
-    <script src="script.js"></script>
+        /**
+         * Maneja la apertura y cierre de la barra de búsqueda en móvil.
+         */
+        function toggleSearch() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.classList.toggle('visible');
+            
+            // Cierra el menú si la búsqueda se abre
+            const navMenu = document.getElementById('nav-menu');
+            navMenu.classList.remove('open');
+        }
+        
+        /**
+         * Placeholder para la función de búsqueda.
+         */
+        function searchNews() {
+            const query = document.getElementById('search').value;
+            // Usamos una función que simula un alert sin usar window.alert
+            alertMessage('Búsqueda simulada para: ' + query); 
+        }
+
+        /**
+         * Placeholder para la navegación del carrusel.
+         */
+        let carouselIndex = 0;
+        function moveCarousel(direction) {
+            carouselIndex += direction;
+            console.log('Movimiento de carrusel:', carouselIndex);
+        }
+        
+        /**
+         * Función auxiliar para mostrar un mensaje temporal sin usar alert().
+         */
+        function alertMessage(message) {
+            console.warn("Mensaje para el usuario:", message);
+            const tempDiv = document.createElement('div');
+            tempDiv.style.cssText = 'position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 5px; z-index: 2000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: opacity 0.3s;';
+            tempDiv.textContent = message;
+            document.body.appendChild(tempDiv);
+            
+            setTimeout(() => {
+                tempDiv.style.opacity = 0;
+                setTimeout(() => {
+                    document.body.removeChild(tempDiv);
+                }, 300);
+            }, 3000);
+        }
+
+        /* --- Lógica de Cookies --- */
+        function openCookieBanner() {
+            const banner = document.getElementById('cookie-banner');
+            if (banner) banner.style.display = 'block';
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const acceptBtn = document.getElementById('accept-cookies');
+            const rejectBtn = document.getElementById('reject-cookies');
+            const cookieBanner = document.getElementById('cookie-banner');
+            
+            // Nota: Aquí se podría añadir lógica para chequear si las cookies ya fueron aceptadas
+            
+            if (acceptBtn && rejectBtn && cookieBanner) {
+                const handleCookieAction = (action) => {
+                    cookieBanner.style.display = 'none';
+                    alertMessage(`Preferencias de cookies guardadas: ${action}.`);
+                };
+
+                acceptBtn.addEventListener('click', () => handleCookieAction('Aceptadas'));
+                rejectBtn.addEventListener('click', () => handleCookieAction('Rechazadas'));
+                
+                // Mostrar banner de cookies después de un segundo (simulación)
+                setTimeout(() => {
+                    openCookieBanner();
+                }, 1000);
+            }
+        });
+
+    </script>
 </body>
 </html>
