@@ -246,3 +246,140 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+// =======================================================
+// LÓGICA JAVASCRIPT PRINCIPAL
+// El código se ejecuta dentro de DOMContentLoaded para evitar errores
+// de 'Cannot read properties of null (reading addEventListener)'
+// =======================================================
+
+document.addEventListener('DOMContentLoaded', () => {
+
+    // --- Funciones de Utilidad ---
+
+    /**
+     * Función auxiliar para mostrar un mensaje temporal al usuario sin usar alert().
+     */
+    function alertMessage(message) {
+        console.warn("Mensaje para el usuario:", message);
+        const tempDiv = document.createElement('div');
+        tempDiv.style.cssText = 'position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 5px; z-index: 2000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s;';
+        tempDiv.textContent = message;
+        document.body.appendChild(tempDiv);
+        
+        // Animación de entrada
+        setTimeout(() => {
+            tempDiv.style.opacity = 1;
+        }, 10);
+        
+        // Animación de salida después de 3 segundos
+        setTimeout(() => {
+            tempDiv.style.opacity = 0;
+            setTimeout(() => {
+                document.body.removeChild(tempDiv);
+            }, 300);
+        }, 3000);
+    }
+
+    // --- Funciones de Navegación y Búsqueda ---
+    
+    // Asignamos las funciones al scope global para que puedan ser llamadas
+    // directamente desde el atributo 'onclick' en el HTML.
+
+    window.toggleMenu = function() {
+        const navMenu = document.getElementById('nav-menu');
+        if (navMenu) {
+            navMenu.classList.toggle('open');
+            
+            // Cierra la búsqueda si el menú se abre (limpieza de UI en móvil)
+            const searchInput = document.getElementById('search-input');
+            if (window.innerWidth < 768 && searchInput) {
+                searchInput.classList.remove('visible');
+            }
+        }
+    }
+
+    window.toggleSearch = function() {
+        const searchInput = document.getElementById('search-input');
+        if (searchInput) {
+            searchInput.classList.toggle('visible');
+            
+            // Cierra el menú si la búsqueda se abre
+            const navMenu = document.getElementById('nav-menu');
+            if (navMenu) {
+                navMenu.classList.remove('open');
+            }
+        }
+    }
+
+    window.searchNews = function() {
+        const searchInput = document.getElementById('search');
+        if (searchInput) {
+            const query = searchInput.value;
+            console.log('Búsqueda simulada por:', query);
+            alertMessage('Búsqueda simulada para: ' + query);
+            // Lógica de búsqueda real iría aquí
+        }
+    }
+    
+    // --- Lógica del Carrusel ---
+    
+    window.carouselIndex = 0;
+    window.moveCarousel = function(direction) {
+        // Aquí iría la lógica para mover las diapositivas del carrusel (DOM manipulation)
+        window.carouselIndex += direction;
+        console.log('Movimiento de carrusel:', window.carouselIndex);
+        alertMessage(`Carrusel movido al índice: ${window.carouselIndex}`);
+    }
+
+
+    // --- Lógica de Cookies ---
+    
+    const cookieBanner = document.getElementById('cookie-banner');
+    const acceptBtn = document.getElementById('accept-cookies');
+    const rejectBtn = document.getElementById('reject-cookies');
+    
+    // Función para mostrar el banner
+    window.openCookieBanner = function() {
+        if (cookieBanner) {
+             cookieBanner.style.display = 'block';
+        }
+    }
+
+    if (acceptBtn && rejectBtn && cookieBanner) {
+        
+        const handleCookieAction = (action) => {
+            // Lógica para guardar la preferencia (p.ej., en localStorage o una cookie)
+            console.log(`Cookies: Acción '${action}' registrada.`);
+            
+            cookieBanner.style.display = 'none';
+            alertMessage(`Preferencias de cookies guardadas: ${action}.`);
+        };
+
+        // Escuchadores de eventos para los botones del banner
+        acceptBtn.addEventListener('click', () => handleCookieAction('Aceptadas'));
+        rejectBtn.addEventListener('click', () => handleCookieAction('Rechazadas'));
+        
+        // Muestra el banner al cargar (si no hay preferencia guardada previamente)
+        setTimeout(() => {
+            // Simulación: solo mostramos si no está oculto por el CSS
+            if (cookieBanner.style.display !== 'none') {
+                openCookieBanner();
+            }
+        }, 1000);
+    }
+    
+    // --- DEBUGGING EXTRA ---
+    
+    // Esto es un ejemplo de cómo se vería el código que causaba tu error,
+    // si intentara ejecutarse antes de que existiera el elemento:
+    /*
+    const shareButton = document.getElementById('el-elemento-que-no-existe');
+    // Si shareButton es null, la siguiente línea falla:
+    // shareButton.addEventListener('click', () => {}); 
+    */
+    
+    // Si tienes un archivo 'share-modal.js', asegúrate de que use el patrón
+    // document.addEventListener('DOMContentLoaded', ...) para evitar el error 'null'.
+    
+});
