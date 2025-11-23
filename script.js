@@ -1,6 +1,6 @@
 // Funciones para escapar caracteres especiales de una cadena HTML
 function escapeHtml(text) {
-    if (typeof text !== 'string') return ''; // Manejar valores no string
+    if (typeof text !== 'string') return '';
     return text.replace(/[&<>"']/g, function(match) {
         switch (match) {
             case '&': return '&amp;';
@@ -17,11 +17,8 @@ function escapeHtml(text) {
 let currentIndex = 0;
 let autoSlide;
 
-// --- Funciones de Utilidad (Hacerlas globales) ---
+// --- Funciones de Utilidad ---
 
-/**
- * Función auxiliar para mostrar un mensaje temporal al usuario sin usar alert().
- */
 function alertMessage(message) {
     console.warn("Mensaje para el usuario:", message);
     const tempDiv = document.createElement('div');
@@ -29,22 +26,18 @@ function alertMessage(message) {
     tempDiv.textContent = message;
     document.body.appendChild(tempDiv);
     
-    setTimeout(() => {
-        tempDiv.style.opacity = 1;
-    }, 10);
+    setTimeout(() => { tempDiv.style.opacity = 1; }, 10);
     
     setTimeout(() => {
         tempDiv.style.opacity = 0;
-        setTimeout(() => {
-            document.body.removeChild(tempDiv);
-        }, 300);
+        setTimeout(() => { document.body.removeChild(tempDiv); }, 300);
     }, 3000);
 }
 
 // --- Carga de JSON y Renderizado ---
 
 async function getNewsData() {
-    // Datos del JSON simulados para que el código funcione sin el archivo local.
+    // Datos del JSON simulados
     const newsJsonData = {
         "noticias_list": [
             { "id": "2e3c0d60", "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco", "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos...", "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg", "categoria": "policía", "autor": "Javier Huerta Martinez", "destacada": false },
@@ -130,37 +123,29 @@ async function loadCarousel() {
 }
 
 // --- Carrusel Control ---
-
 function moveCarousel(direction) {
     const items = document.querySelectorAll('.carousel-item');
     if (items.length <= 1) return;
     
-    if (items[currentIndex]) {
-        items[currentIndex].classList.remove('active');
-    }
+    if (items[currentIndex]) { items[currentIndex].classList.remove('active'); }
 
     currentIndex = (currentIndex + direction + items.length) % items.length;
     
     const carouselInner = document.getElementById('carousel-inner');
     if (carouselInner) {
-        // Asumiendo que el CSS utiliza flexbox o grid con scroll horizontal controlado
         carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
     
-    if (items[currentIndex]) {
-        items[currentIndex].classList.add('active');
-    }
+    if (items[currentIndex]) { items[currentIndex].classList.add('active'); }
 }
 window.moveCarousel = moveCarousel;
 
 // --- Búsqueda ---
-
 async function searchNews() {
     const searchInput = document.getElementById('search');
     if (!searchInput) return;
     
     const query = (searchInput.value || '').toLowerCase();
-    
     const noticias = await getNewsData();
     
     const filteredNews = noticias
@@ -185,21 +170,27 @@ window.shareArticle = shareArticle;
 
 // --- Menú / Búsqueda (UI) ---
 
+/**
+ * Corrige la funcionalidad del menú hamburguesa, usando la clase 'active' 
+ * para el nav y el botón toggle, y cerrando la búsqueda en móvil.
+ */
 function toggleMenu() {
     const navMenu = document.getElementById('nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
     const searchInputContainer = document.getElementById('search-input');
 
     if (navMenu && menuToggle) {
+        // Toggle the 'active' class on both navigation and the toggle button
         navMenu.classList.toggle('active');
-        menuToggle.classList.toggle('active');
+        menuToggle.classList.toggle('active'); 
         
+        // Cierra la búsqueda si el menú se abre (solo en móvil)
         if (window.innerWidth < 768 && searchInputContainer) {
             searchInputContainer.classList.remove('active');
         }
     }
 }
-window.toggleMenu = toggleMenu;
+window.toggleMenu = toggleMenu; // Make function globally accessible
 
 function toggleSearch() {
     const searchInputContainer = document.getElementById('search-input');
@@ -207,10 +198,7 @@ function toggleSearch() {
 
     if (searchInputContainer) {
         searchInputContainer.classList.toggle('active');
-        
-        if (navMenu) {
-            navMenu.classList.remove('active');
-        }
+        if (navMenu) { navMenu.classList.remove('active'); }
         
         const searchInput = document.getElementById('search');
         if (searchInputContainer.classList.contains('active') && searchInput) {
@@ -235,29 +223,29 @@ function hideCookieBanner() {
     if (banner) banner.style.display = 'none';
 }
 
-function showAppModalInitial() {
+function checkAppModalVisibility() {
     const appModal = document.getElementById('app-modal');
-    // Si el usuario no ha visto el modal, lo mostramos inmediatamente (sin dependencia de cookies)
-    if (appModal && !localStorage.getItem('app-modal-seen')) {
-        setTimeout(() => {
-            appModal.style.display = 'flex';
-            // Opcional: si quieres que se muestre una sola vez, descomenta la siguiente línea
-            // localStorage.setItem('app-modal-seen', 'true'); 
-        }, 100);
-    }
+    if (!appModal) return;
+
+    if (localStorage.getItem('app-modal-seen') === 'true') {
+        appModal.style.display = 'none';
+    } 
 }
 
 function hideAppModal() {
     const appModal = document.getElementById('app-modal');
-    if (appModal) appModal.style.display = 'none';
+    if (appModal) {
+        appModal.style.display = 'none';
+        localStorage.setItem('app-modal-seen', 'true'); 
+    }
 }
 window.hideAppModal = hideAppModal;
 
 
 // --- Evento Principal (Unificado) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Mostrar Banner de la App Inmediatamente (la corrección)
-    showAppModalInitial();
+    // 1. Verificar el estado del Banner de la App
+    checkAppModalVisibility();
 
     // 2. Carga de Contenido
     loadNews();
@@ -269,7 +257,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const rejectBtn = document.getElementById('reject-cookies');
 
     if (!consent) {
-        // Muestra el banner de cookies después de 1s si no hay consentimiento
         setTimeout(openCookieBanner, 1000); 
     }
     
