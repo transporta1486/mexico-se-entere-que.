@@ -5,40 +5,30 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>México Se Enteré Qué | Noticias de Atizapán, Naucalpan, Izcalli y más</title>
     
-    <!-- Enlace a Google Fonts para el estilo moderno -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
     
+    <link rel="stylesheet" href="styles.css"> 
     
-     <link rel="stylesheet" href="styles.css"> 
-    
-
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-Q3ZL4VNDPW');
-    </script>
-</head>
+    </head>
 <body>
     
-    <!-- BANNER DE DESCARGA DE APP (Siempre visible, fixed top) -->
-    <div class="app-download-bar">
-        <p>¡Descarga nuestra App de Noticias y lleva México Se Enteré Qué en tu bolsillo!</p>
-        <a href="#" target="_blank" rel="noopener noreferrer">📲 Descargar App</a>
+    <div id="app-modal" class="app-download-bar" style="display:none; position: fixed; bottom: 0; width: 100%; justify-content: space-between; align-items: center; z-index: 1000; padding: 10px; background-color: #388E3C; color: white;">
+        <p style="margin: 0; font-size: 14px;">¡Descarga nuestra App de Noticias y lleva México Se Enteré Qué en tu bolsillo!</p>
+        <div>
+            <a href="#" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: underline; margin-right: 15px;">📲 Descargar App</a>
+            <button onclick="hideAppModal()" style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
+        </div>
     </div>
 
     <header>
       <div class="logo"><h1>México Se Enteré Qué</h1></div>
       
-      <!-- Botón de Hamburguesa (visible solo en móvil) -->
       <button class="menu-toggle" aria-label="Abrir menú" onclick="toggleMenu()">
         <span></span><span></span><span></span>
       </button>
       
-      <!-- Navegación: ID necesario para el JS (nav.open) -->
       <nav id="nav-menu">
         <ul>
           <li><a href="index.html">Inicio</a></li>
@@ -50,14 +40,11 @@
         </ul>
       </nav>
       
-      <!-- Barra de Búsqueda -->
       <div class="search-bar">
-        <!-- Botón de Lupa (visible en móvil, oculta en desktop) -->
         <button class="search-toggle" aria-label="Mostrar búsqueda" onclick="toggleSearch()">🔍</button>
-        <!-- Contenedor de búsqueda: ID necesario para el JS (search-input.visible) -->
         <div class="search-input" id="search-input">
           <input type="text" id="search" placeholder="Buscar noticias..." />
-          <button onclick="searchNews()">🔍</button>
+          <button id="search-button" onclick="searchNews()">🔍</button> 
         </div>
       </div>
     </header>
@@ -65,63 +52,41 @@
     <main>
       <section class="hero">
         <h2>Noticias Destacadas</h2>
-        <!-- Carrusel de Noticias -->
         <div class="carousel">
-          <div class="carousel-inner" style="min-height: 200px; text-align: center; padding: 20px;">
-            <p>Aquí irá un carrusel dinámico de noticias principales.</p>
+          <div class="carousel-inner" id="carousel-inner" style="min-height: 200px; text-align: center; padding: 20px;">
+            <p>Cargando carrusel...</p>
           </div>
-          <!-- Botones llaman a moveCarousel() del JS -->
           <button class="carousel-prev" onclick="moveCarousel(-1)">❮</button>
           <button class="carousel-next" onclick="moveCarousel(1)">❯</button>
         </div>
       </section>
 
-      <section class="ad-section">
-        <!-- Bloque AdSense - Placeholder -->
-        <p style="text-align: center; color: #777; font-style: italic; border: 1px dashed #ccc; padding: 15px; background: white;">[Espacio para Anuncio 1: 320x100 o Responsive]</p>
-      </section>
-
-      <section class="categories">
-        <h2>Categorías de Cobertura</h2>
-        <div class="category-grid">
-          <a href="atizapan.html" class="category">Atizapán</a>
-          <a href="naucalpan.html" class="category">Naucalpan</a>
-          <a href="tlalnepantla.html" class="category">Tlalnepantla</a>
-          <a href="nicolas-romero.html" class="category">N. Romero</a>
-          <a href="cuatitlan-izcalli.html" class="category">Izcalli</a>
-          <a href="#" class="category">Política</a>
-          <a href="#" class="category">Seguridad</a>
-          <a href="#" class="category">Sociedad</a>
-        </div>
-      </section>
-      
-      <!-- SECCIÓN DE ANUNCIOS PATROCINADOS (Usa clases ad-grid y ad-card para el estilo moderno) -->
       <section class="sponsored-ads">
-          <h2>⭐ Anuncios y Servicios Locales ⭐</h2>
+          <h2>⭐ Patrocinadores Destacados ⭐</h2>
           <div class="ad-grid">
               
-              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="https://placehold.co/600x338/546E7A/FFFFFF?text=Tech" alt="Tecnología y gadgets">
-                  <h4>Gadgets Atizapán</h4>
-                  <p>Lo último en tecnología con entrega inmediata.</p>
+              <a href="https://manzaboom.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/FF5722/FFFFFF?text=Manzaboom" alt="Manzaboom - Tecnología">
+                  <h4>Manzaboom.com</h4>
+                  <p>La tecnología que necesitas para tu negocio.</p>
               </a>
               
-              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="https://placehold.co/600x338/8D6E63/FFFFFF?text=Mudanzas" alt="Mudanzas en México">
-                  <h4>Mudanzas Seguras Naucalpan</h4>
-                  <p>Servicio profesional y económico.</p>
+              <a href="https://tacosdecanastaenmexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/FFC107/333333?text=Tacos" alt="Tacos de Canasta">
+                  <h4>Tacos de Canasta</h4>
+                  <p>El mejor sabor para tus eventos.</p>
               </a>
               
-              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="https://placehold.co/600x338/FFB300/333333?text=Comida" alt="Tacos de Canasta">
-                  <h4>Tacos El Güero</h4>
-                  <p>El mejor sabor para tus fiestas en Izcalli.</p>
+              <a href="https://mudanzas-en-mexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/009688/FFFFFF?text=Mudanzas" alt="Mudanzas en México">
+                  <h4>Mudanzas en México</h4>
+                  <p>Servicio profesional, seguro y rápido.</p>
               </a>
               
-              <a href="#" target="_blank" rel="noopener noreferrer" class="ad-card">
-                  <img src="https://placehold.co/600x338/3F51B5/FFFFFF?text=Legal" alt="Asesoría Jurídica">
-                  <h4>Abogados Fortis</h4>
-                  <p>Asesoría legal experta en el Estado de México.</p>
+              <a href="https://manzaboom.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/795548/FFFFFF?text=Manzaboom+Servicios" alt="Manzaboom - Servicios">
+                  <h4>Servicios Manzaboom</h4>
+                  <p>Soporte técnico y diseño web.</p>
               </a>
               
           </div>
@@ -129,21 +94,12 @@
       
       <section class="latest-news">
         <h2>Últimas Noticias</h2>
-        <!-- Contenedor con news-grid e ID para el contenido dinámico -->
         <div class="news-grid" id="news-container">
-            <!-- Ejemplos de Noticias para la demostración del grid -->
-            <p>🔴 NOTICIA: Choque en la López Mateos genera tráfico intenso cerca de Galerías.</p>
-            <p>🟢 POLÍTICA: Aprueban nuevo presupuesto para infraestructura en Tlalnepantla.</p>
-            <p>🚨 SEGURIDAD: Desmantelan banda de robo a casa habitación en Naucalpan.</p>
-            <p>📣 SOCIEDAD: Anuncian festival gastronómico de fin de año en Cuautitlán Izcalli.</p>
+            <p>Cargando últimas noticias...</p>
           </div>
       </section>
 
-      <section class="ad-section">
-        <!-- Bloque AdSense - Placeholder -->
-        <p style="text-align: center; color: #777; font-style: italic; border: 1px dashed #ccc; padding: 15px; background: white;">[Espacio para Anuncio 2: 300x250 o Responsive]</p>
-      </section>
-    </main>
+      </main>
 
     <footer>
       <p>&copy; 2025 México Se Enteré Qué. Todos los derechos reservados.</p>
@@ -156,124 +112,21 @@
         <a href="privacidad.html">Política de Privacidad</a> ·
         <a href="terminos.html">Aviso Legal y Términos</a> ·
         <a href="cookies.html">Política de Cookies</a> ·
-        <!-- Botón llama a openCookieBanner() del JS -->
         <button class="cookie-config-btn" onclick="openCookieBanner()">Configurar cookies</button>
       </div>
     </footer>
 
-    <!-- BANNER DE COOKIES (ID necesario para el JS) -->
-    <div id="cookie-banner" class="cookie-banner" style="display:none;">
+    <div id="cookie-banner" class="cookie-banner" style="display:none; position: fixed; bottom: 0; width: 100%; z-index: 1000;">
       <div class="cookie-content">
         <p>
-          Usamos cookies para mejorar tu experiencia y, con tu consentimiento, mostrar anuncios. 
-          Puedes aceptar o rechazar. <a href="cookies.html">Más info</a>.
+          Usamos cookies para mejorar tu experiencia. Puedes aceptar o rechazar. <a href="cookies.html">Más info</a>.
         </p>
         <div class="cookie-actions">
-          <!-- IDs necesarios para el JS -->
           <button id="accept-cookies" class="btn-accept">Aceptar</button>
           <button id="reject-cookies" class="btn-reject">Rechazar</button>
         </div>
       </div>
     </div>
 
-    <!-- 
-        =======================================================
-        LÓGICA JAVASCRIPT: INCLUIDA AQUÍ PARA PRUEBAS RÁPIDAS
-        (Si usas un archivo 'script.js' separado, solo necesitas: <script src="script.js"></script>)
-        =======================================================
-    -->
-    <script>
-        /**
-         * Maneja la apertura y cierre del menú de navegación lateral en móvil.
-         */
-        function toggleMenu() {
-            const navMenu = document.getElementById('nav-menu');
-            navMenu.classList.toggle('open');
-            
-            // Cierra la búsqueda si el menú se abre
-            const searchInput = document.getElementById('search-input');
-            if (window.innerWidth < 768) {
-                searchInput.classList.remove('visible');
-            }
-        }
-
-        /**
-         * Maneja la apertura y cierre de la barra de búsqueda en móvil.
-         */
-        function toggleSearch() {
-            const searchInput = document.getElementById('search-input');
-            searchInput.classList.toggle('visible');
-            
-            // Cierra el menú si la búsqueda se abre
-            const navMenu = document.getElementById('nav-menu');
-            navMenu.classList.remove('open');
-        }
-        
-        /**
-         * Placeholder para la función de búsqueda.
-         */
-        function searchNews() {
-            const query = document.getElementById('search').value;
-            // Usamos una función que simula un alert sin usar window.alert
-            alertMessage('Búsqueda simulada para: ' + query); 
-        }
-
-        /**
-         * Placeholder para la navegación del carrusel.
-         */
-        let carouselIndex = 0;
-        function moveCarousel(direction) {
-            carouselIndex += direction;
-            console.log('Movimiento de carrusel:', carouselIndex);
-        }
-        
-        /**
-         * Función auxiliar para mostrar un mensaje temporal sin usar alert().
-         */
-        function alertMessage(message) {
-            console.warn("Mensaje para el usuario:", message);
-            const tempDiv = document.createElement('div');
-            tempDiv.style.cssText = 'position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 5px; z-index: 2000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: opacity 0.3s;';
-            tempDiv.textContent = message;
-            document.body.appendChild(tempDiv);
-            
-            setTimeout(() => {
-                tempDiv.style.opacity = 0;
-                setTimeout(() => {
-                    document.body.removeChild(tempDiv);
-                }, 300);
-            }, 3000);
-        }
-
-        /* --- Lógica de Cookies --- */
-        function openCookieBanner() {
-            const banner = document.getElementById('cookie-banner');
-            if (banner) banner.style.display = 'block';
-        }
-        
-        document.addEventListener('DOMContentLoaded', () => {
-            const acceptBtn = document.getElementById('accept-cookies');
-            const rejectBtn = document.getElementById('reject-cookies');
-            const cookieBanner = document.getElementById('cookie-banner');
-            
-            // Nota: Aquí se podría añadir lógica para chequear si las cookies ya fueron aceptadas
-            
-            if (acceptBtn && rejectBtn && cookieBanner) {
-                const handleCookieAction = (action) => {
-                    cookieBanner.style.display = 'none';
-                    alertMessage(`Preferencias de cookies guardadas: ${action}.`);
-                };
-
-                acceptBtn.addEventListener('click', () => handleCookieAction('Aceptadas'));
-                rejectBtn.addEventListener('click', () => handleCookieAction('Rechazadas'));
-                
-                // Mostrar banner de cookies después de un segundo (simulación)
-                setTimeout(() => {
-                    openCookieBanner();
-                }, 1000);
-            }
-        });
-
-    </script>
-</body>
+    <script src="script.js"></script> </body>
 </html>
