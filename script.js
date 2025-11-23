@@ -8,7 +8,7 @@ function escapeHtml(text) {
             case '>': return '&gt;';
             case '"': return '&quot;';
             case "'": return '&#039;';
-            default: return match; // Debería cubrir todos los casos
+            default: return match;
         }
     });
 }
@@ -17,7 +17,7 @@ function escapeHtml(text) {
 let currentIndex = 0;
 let autoSlide;
 
-// --- Funciones de Utilidad ---
+// --- Funciones de Utilidad (Hacerlas globales) ---
 
 /**
  * Función auxiliar para mostrar un mensaje temporal al usuario sin usar alert().
@@ -29,12 +29,10 @@ function alertMessage(message) {
     tempDiv.textContent = message;
     document.body.appendChild(tempDiv);
     
-    // Animación de entrada
     setTimeout(() => {
         tempDiv.style.opacity = 1;
     }, 10);
     
-    // Animación de salida después de 3 segundos
     setTimeout(() => {
         tempDiv.style.opacity = 0;
         setTimeout(() => {
@@ -46,23 +44,32 @@ function alertMessage(message) {
 // --- Carga de JSON y Renderizado ---
 
 async function getNewsData() {
-    try {
-        const response = await fetch('noticias.json');
-        if (!response.ok) throw new Error('No se encontró noticias.json');
-        const data = await response.json();
-        return data.noticias_list || [];
-    } catch (e) {
-        console.error('Error cargando noticias:', e);
-        return [];
-    }
+    // URL simulada del JSON de noticias
+    const newsJsonData = {
+        "noticias_list": [
+            { "id": "2e3c0d60", "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco", "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos...", "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg", "categoria": "policía", "autor": "Javier Huerta Martinez", "destacada": false },
+            { "id": "a9b8c7d6", "titulo": "Baches afectan casi el 80 % del Valle de México, según denunciantes", "resumen": "Denuncias ciudadanas, apoyadas por imágenes y videos, revelan que los baches se han convertido en un problema crítico y generalizado...", "imagen": "https://i.postimg.cc/xdr6Ct7j/FB-IMG-1755466516879.jpg", "categoria": "infraestructura", "autor": "Javier Huerta Martinez", "destacada": false },
+            { "id": "1f2g3h4i", "titulo": "Familia de AMLO en el foco mediático tras rumores de mudanza presidencial", "resumen": "Versiones sin confirmar, que circulan principalmente en redes sociales, han desatado una ola de especulaciones sobre una supuesta mudanza...", "imagen": "https://i.postimg.cc/sX5dxMKq/f3eed-16-08-2025-bety-1.jpg", "categoria": "política", "autor": "Javier Huerta Martinez", "destacada": true },
+            { "id": "c7d6e5f4", "titulo": "🚨 México se entere qué: Rescatan a 15 personas atrapadas en Teleférico de Torreón", "resumen": "Momentos de tensión se vivieron en Torreón, Coahuila, cuando una falla mecánica dejó varadas a 15 personas en las góndolas...", "imagen": "https://i.postimg.cc/d08j8525/telefericotorreonsl-312b03dd-focus-0-0-1200-600.webp", "categoria": "sucesos", "autor": "", "destacada": false },
+            { "id": "b8c7d6e5", "titulo": "🔥 México se entere qué: Incendio arrasa mercado en Monterrey", "resumen": "Un fuerte incendio consumió gran parte de un mercado popular en Monterrey durante la madrugada...", "imagen": "https://i.postimg.cc/J4nx9c8h/incendio-consume-nueve-locales-en-un-mercado-de-monterrey-2496html-incendio-nljpg-8123html-f0dbfbc7.webp", "categoria": "sociedad", "autor": "", "destacada": false }
+        ]
+    };
+    
+    // En un sitio real, usarías:
+    // const response = await fetch('noticias.json');
+    // const data = await response.json();
+    // return data.noticias_list || [];
+    
+    return newsJsonData.noticias_list || [];
 }
+
 
 function renderNews(newsList, containerId) {
     const newsContainer = document.getElementById(containerId);
     if (!newsContainer) return;
 
     if (!newsList.length) {
-        newsContainer.innerHTML = '<p>No hay noticias disponibles.</p>';
+        newsContainer.innerHTML = '<p>No se encontraron noticias.</p>';
         return;
     }
 
@@ -70,34 +77,38 @@ function renderNews(newsList, containerId) {
     newsList.forEach(news => {
         const safeTitle = escapeHtml(news.titulo || 'Noticia');
         const isCarousel = containerId === 'carousel-inner';
-        const logoUrl = isCarousel ? (news.logo_horizontal || 'https://via.placeholder.com/50x50?text=Logo') : (news.logo_cuadrado || 'https://via.placeholder.com/50x50?text=Logo');
-
+        
         const articleContent = isCarousel ? `
             <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
             <div class="carousel-content">
                 <h3>${safeTitle}</h3>
                 <p>${escapeHtml(news.resumen)}</p>
                 <div class="author-info">
-                    <img src="${logoUrl}" alt="Logo del autor" class="author-logo-horizontal">
                     <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
                 </div>
                 <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
             </div>
         ` : `
-            <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
-            <h4>${safeTitle}</h4>
-            <p>${escapeHtml(news.resumen)}</p>
-            <div class="author-info">
-                <img src="${logoUrl}" alt="Logo del autor" class="author-logo">
-                <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
-            </div>
-            <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
+            <article>
+                <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
+                <h4>${safeTitle}</h4>
+                <p>${escapeHtml(news.resumen)}</p>
+                <div class="author-info">
+                    <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
+                </div>
+                <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
+            </article>
         `;
 
-        const tag = isCarousel ? 'div' : 'article';
+        const tag = isCarousel ? 'div' : 'span'; // Usar <span> o <div> para el grid container
         const classNames = isCarousel ? 'carousel-item' : '';
 
-        newsContainer.innerHTML += `<${tag} class="${classNames}">${articleContent}</${tag}>`;
+        // El grid-container ya tiene la clase 'news-grid', solo agregamos los artículos/spans
+        if (isCarousel) {
+             newsContainer.innerHTML += `<${tag} class="${classNames}">${articleContent}</${tag}>`;
+        } else {
+             newsContainer.innerHTML += articleContent;
+        }
     });
 }
 
@@ -109,14 +120,13 @@ async function loadNews() {
 async function loadCarousel() {
     const noticias = await getNewsData();
     const destacadas = noticias.filter(n => n.destacada);
-    const lista = destacadas.length ? destacadas : noticias.slice(0, 3);
+    const lista = destacadas.length ? destacadas.slice(0, 3) : noticias.slice(0, 3);
     
     renderNews(lista, 'carousel-inner');
 
-    // Muestra el primer elemento y habilita el carrusel
-    const firstItem = document.querySelector('.carousel-item');
-    if (firstItem) {
-        firstItem.classList.add('active');
+    const items = document.querySelectorAll('.carousel-item');
+    if (items.length > 0) {
+        items[0].classList.add('active');
     }
 
     if (lista.length > 1) {
@@ -132,45 +142,43 @@ function moveCarousel(direction) {
     if (items.length <= 1) return;
     
     // Quita 'active' del elemento actual
-    items[currentIndex].classList.remove('active');
+    if (items[currentIndex]) {
+        items[currentIndex].classList.remove('active');
+    }
 
     // Calcula el nuevo índice
     currentIndex = (currentIndex + direction + items.length) % items.length;
     
-    // Mueve la vista con CSS (si usas translateX) o añade 'active'
-    const carouselInner = document.querySelector('.carousel-inner');
+    // Mueve la vista (requiere CSS para funcionar correctamente)
+    const carouselInner = document.getElementById('carousel-inner');
     if (carouselInner) {
         carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
     
     // Añade 'active' al nuevo elemento
-    items[currentIndex].classList.add('active');
+    if (items[currentIndex]) {
+        items[currentIndex].classList.add('active');
+    }
 }
-window.moveCarousel = moveCarousel; // Hacer accesible globalmente
+window.moveCarousel = moveCarousel;
 
 // --- Búsqueda ---
 
 async function searchNews() {
     const searchInput = document.getElementById('search');
-    const newsContainer = document.getElementById('news-container');
-    const query = (searchInput.value || '').toLowerCase();
+    if (!searchInput) return;
     
-    if (!newsContainer) return;
+    const query = (searchInput.value || '').toLowerCase();
     
     const noticias = await getNewsData();
     
     const filteredNews = noticias
         .filter(n => (n.titulo || '').toLowerCase().includes(query) || (n.resumen || '').toLowerCase().includes(query));
     
-    if (filteredNews.length === 0) {
-        newsContainer.innerHTML = `<p>No se encontraron resultados para "${escapeHtml(query)}".</p>`;
-        return;
-    }
-    
     renderNews(filteredNews.slice(0, 6), 'news-container');
     alertMessage(`Resultados de búsqueda cargados para: ${escapeHtml(query)}`);
 }
-window.searchNews = searchNews; // Hacer accesible globalmente
+window.searchNews = searchNews;
 
 // --- Compartir ---
 function shareArticle(title) {
@@ -179,36 +187,38 @@ function shareArticle(title) {
     if (navigator.share) {
         navigator.share({ title, text, url }).catch(() => {});
     } else {
-        alertMessage(`Comparte este enlace: ${url}`);
+        alertMessage(`Copia este enlace para compartir: ${url}`);
     }
 }
-window.shareArticle = shareArticle; // Hacer accesible globalmente
+window.shareArticle = shareArticle;
 
 // --- Menú / Búsqueda (UI) ---
 
 function toggleMenu() {
     const navMenu = document.getElementById('nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
+    const searchInputContainer = document.getElementById('search-input');
+
     if (navMenu && menuToggle) {
-        navMenu.classList.toggle('active'); // Usar 'active' en lugar de 'open' para consistencia con el código original
+        navMenu.classList.toggle('active');
         menuToggle.classList.toggle('active');
         
-        // Cierra la búsqueda si el menú se abre (limpieza de UI en móvil)
-        const searchInputContainer = document.getElementById('search-input');
+        // Cierra la búsqueda si el menú se abre
         if (window.innerWidth < 768 && searchInputContainer) {
-            searchInputContainer.classList.remove('active'); // Usar 'active' en lugar de 'visible'
+            searchInputContainer.classList.remove('active');
         }
     }
 }
-window.toggleMenu = toggleMenu; // Hacer accesible globalmente
+window.toggleMenu = toggleMenu;
 
 function toggleSearch() {
     const searchInputContainer = document.getElementById('search-input');
+    const navMenu = document.getElementById('nav-menu');
+
     if (searchInputContainer) {
-        searchInputContainer.classList.toggle('active'); // Usar 'active' en lugar de 'visible'
+        searchInputContainer.classList.toggle('active');
         
         // Cierra el menú si la búsqueda se abre
-        const navMenu = document.getElementById('nav-menu');
         if (navMenu) {
             navMenu.classList.remove('active');
         }
@@ -220,45 +230,31 @@ function toggleSearch() {
         }
     }
 }
-window.toggleSearch = toggleSearch; // Hacer accesible globalmente
+window.toggleSearch = toggleSearch;
 
-// --- Cookies y AdSense ---
+// --- Cookies y App Modal ---
 
 function openCookieBanner() {
     const banner = document.getElementById('cookie-banner');
-    if (banner) banner.style.display = 'block';
+    if (banner && localStorage.getItem('cookies-consent') === null) {
+        banner.style.display = 'block';
+    }
 }
+window.openCookieBanner = openCookieBanner;
 
 function hideCookieBanner() {
     const banner = document.getElementById('cookie-banner');
     if (banner) banner.style.display = 'none';
 }
 
-function loadAdSense() {
-    if (document.getElementById('adsbygoogle-js')) return;
-    const s = document.createElement('script');
-    s.id = 'adsbygoogle-js';
-    s.async = true;
-    // **RECUERDA CAMBIAR ESTO POR TU ID DE ADSENSE REAL**
-    s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX';
-    s.crossOrigin = 'anonymous';
-    s.onload = () => {
-        try {
-            (window.adsbygoogle = window.adsbygoogle || []).push({});
-        } catch (e) { console.warn('No se pudo inicializar anuncios:', e); }
-    };
-    document.head.appendChild(s);
-}
-
-// --- Modal de la App ---
 function showAppModal() {
     const appModal = document.getElementById('app-modal');
-    if (appModal && !localStorage.getItem('app-modal-seen')) {
+    if (appModal && !localStorage.getItem('app-modal-seen') && localStorage.getItem('cookies-consent') === 'accepted') {
         setTimeout(() => {
             appModal.style.display = 'flex';
-            // Para fines de prueba, puedes comentar la siguiente línea
-            localStorage.setItem('app-modal-seen', 'true'); 
-        }, 2000);
+            // Lo dejamos comentado para que se muestre en cada recarga para fines de prueba
+            // localStorage.setItem('app-modal-seen', 'true'); 
+        }, 3000);
     }
 }
 
@@ -266,36 +262,35 @@ function hideAppModal() {
     const appModal = document.getElementById('app-modal');
     if (appModal) appModal.style.display = 'none';
 }
-window.hideAppModal = hideAppModal; // Hacer accesible globalmente para el botón de cerrar
+window.hideAppModal = hideAppModal;
+
 
 // --- Evento Principal (Unificado) ---
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Carga de Contenido
     loadNews();
     loadCarousel();
-
+    
     // 2. Lógica de Cookies
     const consent = localStorage.getItem('cookies-consent');
     const acceptBtn = document.getElementById('accept-cookies');
     const rejectBtn = document.getElementById('reject-cookies');
 
     if (!consent) {
-        openCookieBanner();
-    } else {
-        if (consent === 'accepted') {
-            loadAdSense();
-        }
+        setTimeout(openCookieBanner, 1000); // Muestra el banner después de 1s si no hay consentimiento
+    } else if (consent === 'accepted') {
+        // En un sitio real, aquí cargarías Google Analytics y Adsense
         showAppModal();
     }
-
+    
     // 3. Manejadores de eventos de botones de Cookies
     if (acceptBtn) {
         acceptBtn.addEventListener('click', () => {
             localStorage.setItem('cookies-consent', 'accepted');
             hideCookieBanner();
-            loadAdSense();
+            // loadAdSense(); // Descomentar para cargar ads reales
             showAppModal();
-            alertMessage('Cookies aceptadas. ¡Gracias!');
+            alertMessage('Cookies aceptadas.');
         });
     }
 
@@ -303,7 +298,6 @@ document.addEventListener('DOMContentLoaded', () => {
         rejectBtn.addEventListener('click', () => {
             localStorage.setItem('cookies-consent', 'rejected');
             hideCookieBanner();
-            showAppModal();
             alertMessage('Cookies rechazadas.');
         });
     }
