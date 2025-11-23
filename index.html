@@ -9,14 +9,23 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      // Configuración de la etiqueta de Google Analytics
       gtag('config', 'G-Q3ZL4VNDPW');
     </script>
+
     <title>México Se Enteré Qué - Noticias WAP</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <div id="app-modal" class="app-download-bar" style="position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; padding: 10px; background-color: #388E3C; color: white;">
+        <p style="margin: 0; font-size: 14px;">¡Descarga nuestra App **WAP** (con Manifiesto) y lleva México Se Enteré Qué en tu bolsillo!</p>
+        <div>
+            <a id="download-app-link" href="/downloads/MexicoSeEntereQue.jad" style="color: white; text-decoration: underline; margin-right: 15px;">⬇️ Descargar (WAP)</a>
+            <button onclick="hideAppModal()" style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
+        </div>
+    </div>
+
     <header>
         <div class="logo">
             <h1>México Se Enteré Qué</h1>
@@ -106,14 +115,6 @@
             <a href="#">Términos y Condiciones</a>
         </div>
     </footer>
-
-    <div id="app-modal" class="app-download-bar" style="position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; padding: 10px; background-color: #388E3C; color: white;">
-        <p style="margin: 0; font-size: 14px;">¡Descarga nuestra App **WAP** (con Manifiesto) y lleva México Se Enteré Qué en tu bolsillo!</p>
-        <div>
-            <a id="download-app-link" href="/downloads/MexicoSeEntereQue.jad" style="color: white; text-decoration: underline; margin-right: 15px;">⬇️ Descargar (WAP)</a>
-            <button onclick="hideAppModal()" style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
-        </div>
-    </div>
 
     <div id="cookie-banner" class="cookie-banner" style="display: none; position: fixed; bottom: 0; width: 100%; z-index: 1000;">
         <div class="cookie-content">
