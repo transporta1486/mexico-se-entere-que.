@@ -227,19 +227,30 @@ function hideCookieBanner() {
     if (banner) banner.style.display = 'none';
 }
 
+// Verifica si la página se está ejecutando como una PWA instalada
+function isPWAInstalled() {
+    // Si el modo de visualización es 'standalone', 'fullscreen', o 'minimal-ui',
+    // significa que la PWA está instalada y ejecutándose desde el ícono de inicio.
+    return window.matchMedia('(display-mode: standalone)').matches || 
+           window.matchMedia('(display-mode: fullscreen)').matches || 
+           window.matchMedia('(display-mode: minimal-ui)').matches;
+}
+
+// Función que se ejecuta al cargar la página
 function checkAppModalVisibility() {
     const appModal = document.getElementById('app-modal');
     if (!appModal) return;
 
-    // Si la bandera 'app-modal-seen' existe en localStorage, oculta el banner
-    if (localStorage.getItem('app-modal-seen') === 'true') {
+    // Lógica para mostrar/ocultar:
+    if (isPWAInstalled()) {
+        // 1. Si está instalada, OCULTAR el banner.
         appModal.style.display = 'none';
+        
     } else {
-        // Si no existe, asegúrate de que esté visible (el HTML ya lo hace, pero es bueno reforzar)
-        appModal.style.display = 'flex'; 
+        // 2. Si NO está instalada, MOSTRAR el banner.
+        appModal.style.display = 'flex';
     }
 }
-window.checkAppModalVisibility = checkAppModalVisibility; // Hacemos global para prueba si es necesario
 
 // NUEVO CÓDIGO MODIFICADO EN script.js
 function checkAppModalVisibility() {
