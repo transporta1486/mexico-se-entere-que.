@@ -1,145 +1,138 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>México Se Enteré Qué | Noticias de Atizapán, Naucalpan, Izcalli y más</title>
     
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="styles.css"> 
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-Q3ZL4VNDPW');
     </script>
-
-    <title>México Se Enteré Qué - Noticias WAP</title>
-    <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700;900&family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-
+    
     <div id="app-modal" class="app-download-bar" style="position: fixed; bottom: 0; width: 100%; display: flex; justify-content: space-between; align-items: center; z-index: 1000; padding: 10px; background-color: #388E3C; color: white;">
-        <p style="margin: 0; font-size: 14px;">¡Descarga nuestra App **WAP** (con Manifiesto) y lleva México Se Enteré Qué en tu bolsillo!</p>
+        <p style="margin: 0; font-size: 14px;">¡Descarga nuestra App de Noticias y lleva México Se Enteré Qué en tu bolsillo!</p>
         <div>
-            <a id="download-app-link" href="/downloads/MexicoSeEntereQue.jad" style="color: white; text-decoration: underline; margin-right: 15px;">⬇️ Descargar (WAP)</a>
+            <a href="#" target="_blank" rel="noopener noreferrer" style="color: white; text-decoration: underline; margin-right: 15px;">📲 Descargar App</a>
             <button onclick="hideAppModal()" style="background: none; border: none; color: white; cursor: pointer; font-size: 16px;">&times;</button>
         </div>
     </div>
 
     <header>
-        <div class="logo">
-            <h1>México Se Enteré Qué</h1>
+      <div class="logo"><h1>México Se Enteré Qué</h1></div>
+      
+      <button class="menu-toggle" aria-label="Abrir menú" onclick="toggleMenu()">
+        <span></span><span></span><span></span>
+      </button>
+      
+      <nav id="nav-menu">
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="atizapan.html">Atizapán</a></li>
+          <li><a href="tlalnepantla.html">Tlalnepantla</a></li>
+          <li><a href="naucalpan.html">Naucalpan</a></li>
+          <li><a href="nicolas-romero.html">N. Romero</a></li>
+          <li><a href="cuatitlan-izcalli.html">Izcalli</a></li>
+        </ul>
+      </nav>
+      
+      <div class="search-bar">
+        <button class="search-toggle" aria-label="Mostrar búsqueda" onclick="toggleSearch()">🔍</button>
+        <div class="search-input" id="search-input">
+          <input type="text" id="search" placeholder="Buscar noticias..." />
+          <button id="search-button" onclick="searchNews()">🔍</button> 
         </div>
-        
-        <nav id="nav-menu">
-            <ul>
-                <li><a href="#">Inicio</a></li>
-                <li><a href="#">Política</a></li>
-                <li><a href="#">Economía</a></li>
-                <li><a href="#">Sociedad</a></li>
-                <li><a href="#">Mundo</a></li>
-            </ul>
-        </nav>
-
-        <div class="search-bar">
-            <div id="search-input" class="search-input">
-                <input type="text" id="search" placeholder="Buscar noticias...">
-                <button id="search-button"><i class="fas fa-search">🔍</i></button>
-            </div>
-            <button class="search-toggle" onclick="toggleSearch()">🔍</button>
-        </div>
-
-        <button class="menu-toggle" onclick="toggleMenu()">
-            <span></span>
-            <span></span>
-            <span></span>
-        </button>
+      </div>
     </header>
 
     <main>
-        <section class="hero">
-            <div class="carousel" id="main-carousel">
-                <div class="carousel-inner" id="carousel-inner">
-                    </div>
-                <button class="carousel-prev" onclick="moveCarousel(-1)">&#10094;</button>
-                <button class="carousel-next" onclick="moveCarousel(1)">&#10095;</button>
-            </div>
-        </section>
+      <section class="hero">
+        <h2>Noticias Destacadas</h2>
+        <div class="carousel">
+          <div class="carousel-inner" id="carousel-inner" style="min-height: 200px; text-align: center; padding: 20px;">
+            <p>Cargando carrusel...</p>
+          </div>
+          <button class="carousel-prev" onclick="moveCarousel(-1)">❮</button>
+          <button class="carousel-next" onclick="moveCarousel(1)">❯</button>
+        </div>
+      </section>
 
-        <section class="categories">
-            <h2>Navega por Categorías</h2>
-            <div class="category-grid">
-                <a href="#" class="category">Política</a>
-                <a href="#" class="category">Policía</a>
-                <a href="#" class="category">Infraestructura</a>
-                <a href="#" class="category">Sucesos</a>
-                <a href="#" class="category">Sociedad</a>
-                <a href="#" class="category">Deportes</a>
-                <a href="#" class="category">Tecnología</a>
-                <a href="#" class="category">Mundo</a>
-            </div>
-        </section>
-
-        <section class="latest-news">
-            <h2>Últimas Noticias</h2>
-            <div class="news-grid" id="news-container">
-                </div>
-        </section>
-
-        <section class="sponsored-ads">
-            <h2>Anuncios Patrocinados</h2>
-            <div class="ad-grid">
-                <a href="#" class="ad-card">
-                    <img src="https://via.placeholder.com/400x120?text=Patrocinador+1" alt="Anuncio 1">
-                    <h4>¡Compra tu Casa Ahora!</h4>
-                    <p>Las mejores tasas de interés en hipotecas.</p>
-                </a>
-                <a href="#" class="ad-card">
-                    <img src="https://via.placeholder.com/400x120?text=Patrocinador+2" alt="Anuncio 2">
-                    <h4>Seguro de Auto Barato</h4>
-                    <p>Cotiza en 30 segundos y ahorra.</p>
-                </a>
-                </div>
-        </section>
+      <section class="sponsored-ads">
+          <h2>⭐ Patrocinadores Destacados ⭐</h2>
+          <div class="ad-grid">
+              
+              <a href="https://manzaboom.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/FF5722/FFFFFF?text=Manzaboom" alt="Manzaboom - Tecnología">
+                  <h4>Manzaboom.com</h4>
+                  <p>La tecnología que necesitas para tu negocio.</p>
+              </a>
+              
+              <a href="https://tacosdecanastaenmexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/FFC107/333333?text=Tacos" alt="Tacos de Canasta">
+                  <h4>Tacos de Canasta</h4>
+                  <p>El mejor sabor para tus eventos.</p>
+              </a>
+              
+              <a href="https://mudanzas-en-mexico.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/009688/FFFFFF?text=Mudanzas" alt="Mudanzas en México">
+                  <h4>Mudanzas en México</h4>
+                  <p>Servicio profesional, seguro y rápido.</p>
+              </a>
+              
+              <a href="https://manzaboom.com" target="_blank" rel="noopener noreferrer" class="ad-card">
+                  <img src="https://placehold.co/600x338/795548/FFFFFF?text=Manzaboom+Servicios" alt="Manzaboom - Servicios">
+                  <h4>Servicios Manzaboom</h4>
+                  <p>Soporte técnico y diseño web.</p>
+              </a>
+              
+          </div>
+      </section>
+      
+      <section class="latest-news">
+        <h2>Últimas Noticias</h2>
+        <div class="news-grid" id="news-container">
+            <p>Cargando últimas noticias...</p>
+          </div>
+      </section>
     </main>
 
     <footer>
-        <p>&copy; 2025 México Se Enteré Qué. Todos los derechos reservados.</p>
-        <div class="social-links">
-            <a href="#">Facebook</a> | 
-            <a href="#">Twitter</a> | 
-            <a href="#">WhatsApp</a>
-        </div>
-        <div class="legal-links">
-            <a href="#">Aviso de Privacidad</a> | 
-            <a href="#">Términos y Condiciones</a>
-        </div>
+      <p>&copy; 2025 México Se Enteré Qué. Todos los derechos reservados.</p>
+      <div class="social-links">
+        <a href="#">Facebook</a>
+        <a href="#">Twitter</a>
+        <a href="#">Instagram</a>
+      </div>
+      <div class="legal-links">
+        <a href="privacidad.html">Política de Privacidad</a> ·
+        <a href="terminos.html">Aviso Legal y Términos</a> ·
+        <a href="cookies.html">Política de Cookies</a> ·
+        <button class="cookie-config-btn" onclick="openCookieBanner()">Configurar cookies</button>
+      </div>
     </footer>
 
-    <div id="cookie-banner" class="cookie-banner" style="display: none; position: fixed; bottom: 0; width: 100%; z-index: 1000;">
-        <div class="cookie-content">
-            <p>Utilizamos cookies propias y de terceros para mejorar su experiencia de navegación. Al continuar, acepta su uso.</p>
-            <div class="cookie-actions">
-                <button id="accept-cookies" class="btn-accept">Aceptar</button>
-                <button id="reject-cookies" class="btn-reject">Rechazar</button>
-            </div>
+    <div id="cookie-banner" class="cookie-banner" style="display:none; position: fixed; bottom: 0; width: 100%; z-index: 1000;">
+      <div class="cookie-content">
+        <p>
+          Usamos cookies para mejorar tu experiencia. Puedes aceptar o rechazar. <a href="cookies.html">Más info</a>.
+        </p>
+        <div class="cookie-actions">
+          <button id="accept-cookies" class="btn-accept">Aceptar</button>
+          <button id="reject-cookies" class="btn-reject">Rechazar</button>
         </div>
+      </div>
     </div>
 
     <script src="script.js"></script>
-    
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
-                    console.log('Service Worker registrado con éxito:', registration.scope);
-                }, function(err) {
-                    console.log('Fallo en el registro de Service Worker:', err);
-                });
-            });
-        } else {
-            console.log('El navegador no soporta Service Workers.');
-        }
-    </script>
 </body>
 </html>
