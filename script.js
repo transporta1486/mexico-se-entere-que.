@@ -251,6 +251,7 @@ function checkAppModalVisibility() {
         appModal.style.display = 'flex';
     }
 }
+
 // La función que se llama cuando el usuario hace clic en el botón de cerrar ('&times;')
 function hideAppModal() {
     const appModal = document.getElementById('app-modal');
@@ -261,6 +262,9 @@ function hideAppModal() {
         appModal.style.display = 'none'; 
     }
 }
+// ¡LÍNEA AÑADIDA! Expone la función para que el HTML pueda llamarla directamente con onclick.
+window.hideAppModal = hideAppModal;
+
 
 // --- Evento Principal (Unificado) ---
 document.addEventListener('DOMContentLoaded', () => {
