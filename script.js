@@ -1,4 +1,4 @@
-// Funciones para escapar caracteres especiales de una cadena HTML
+// Funciones para escapar caracteres especiales de una cadena HTML (Seguridad XSS)
 function escapeHtml(text) {
     if (typeof text !== 'string') return '';
     return text.replace(/[&<>"']/g, function(match) {
@@ -17,11 +17,12 @@ function escapeHtml(text) {
 let currentIndex = 0;
 let autoSlide;
 
-// --- Funciones de Utilidad ---
+// --- Funciones de Utilidad (Alerta Temporal) ---
 
 function alertMessage(message) {
     console.warn("Mensaje para el usuario:", message);
     const tempDiv = document.createElement('div');
+    // Estilos para la alerta flotante
     tempDiv.style.cssText = 'position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%); background: #333; color: white; padding: 10px 20px; border-radius: 5px; z-index: 2000; box-shadow: 0 4px 8px rgba(0,0,0,0.2); opacity: 0; transition: opacity 0.3s;';
     tempDiv.textContent = message;
     document.body.appendChild(tempDiv);
@@ -48,6 +49,7 @@ async function getNewsData() {
         ]
     };
     
+    // Devolvemos la lista de noticias, no el objeto completo
     return newsJsonData.noticias_list || [];
 }
 
@@ -66,6 +68,7 @@ function renderNews(newsList, containerId) {
         const safeTitle = escapeHtml(news.titulo || 'Noticia');
         const isCarousel = containerId === 'carousel-inner';
         
+        // El contenido varía si es para el carrusel o para la cuadrícula principal
         const articleContent = isCarousel ? `
             <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
             <div class="carousel-content">
@@ -89,12 +92,13 @@ function renderNews(newsList, containerId) {
         `;
 
         const tag = isCarousel ? 'div' : 'span';
-        const classNames = isCarousel ? 'carousel-item' : '';
+        const classNames = isCarousel ? 'carousel-item' : 'news-card'; // Cambiado a news-card para mejor semántica en el grid
 
         if (isCarousel) {
              newsContainer.innerHTML += `<${tag} class="${classNames}">${articleContent}</${tag}>`;
         } else {
-             newsContainer.innerHTML += articleContent;
+             // Envuelve el artículo en una tarjeta si no es carrusel
+             newsContainer.innerHTML += `<div class="${classNames}">${articleContent}</div>`;
         }
     });
 }
@@ -106,6 +110,7 @@ async function loadNews() {
 
 async function loadCarousel() {
     const noticias = await getNewsData();
+    // Filtra las noticias destacadas, o usa las primeras 3 si no hay destacadas
     const destacadas = noticias.filter(n => n.destacada);
     const lista = destacadas.length ? destacadas.slice(0, 3) : noticias.slice(0, 3);
     
@@ -133,6 +138,7 @@ function moveCarousel(direction) {
     
     const carouselInner = document.getElementById('carousel-inner');
     if (carouselInner) {
+        // Mueve el carrusel usando CSS Transform
         carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
     }
     
@@ -161,8 +167,10 @@ function shareArticle(title) {
     const url = window.location.href;
     const text = `¡Mira esta noticia en México Se Enteré Qué!: ${title}`;
     if (navigator.share) {
+        // Uso de la API nativa de compartir
         navigator.share({ title, text, url }).catch(() => {});
     } else {
+        // Opción de fallback para navegadores antiguos
         alertMessage(`Copia este enlace para compartir: ${url}`);
     }
 }
@@ -170,27 +178,22 @@ window.shareArticle = shareArticle;
 
 // --- Menú / Búsqueda (UI) ---
 
-/**
- * Corrige la funcionalidad del menú hamburguesa, usando la clase 'active' 
- * para el nav y el botón toggle, y cerrando la búsqueda en móvil.
- */
 function toggleMenu() {
     const navMenu = document.getElementById('nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
     const searchInputContainer = document.getElementById('search-input');
 
     if (navMenu && menuToggle) {
-        // Toggle the 'active' class on both navigation and the toggle button
         navMenu.classList.toggle('active');
         menuToggle.classList.toggle('active'); 
         
-        // Cierra la búsqueda si el menú se abre (solo en móvil)
+        // Cierra la búsqueda si el menú se abre (en vista móvil)
         if (window.innerWidth < 768 && searchInputContainer) {
             searchInputContainer.classList.remove('active');
         }
     }
 }
-window.toggleMenu = toggleMenu; // Make function globally accessible
+window.toggleMenu = toggleMenu;
 
 function toggleSearch() {
     const searchInputContainer = document.getElementById('search-input');
@@ -212,6 +215,7 @@ window.toggleSearch = toggleSearch;
 
 function openCookieBanner() {
     const banner = document.getElementById('cookie-banner');
+    // Muestra el banner solo si no hay consentimiento previo
     if (banner && localStorage.getItem('cookies-consent') === null) {
         banner.style.display = 'block';
     }
@@ -227,10 +231,15 @@ function checkAppModalVisibility() {
     const appModal = document.getElementById('app-modal');
     if (!appModal) return;
 
+    // Si la bandera 'app-modal-seen' existe en localStorage, oculta el banner
     if (localStorage.getItem('app-modal-seen') === 'true') {
         appModal.style.display = 'none';
-    } 
+    } else {
+        // Si no existe, asegúrate de que esté visible (el HTML ya lo hace, pero es bueno reforzar)
+        appModal.style.display = 'flex'; 
+    }
 }
+window.checkAppModalVisibility = checkAppModalVisibility; // Hacemos global para prueba si es necesario
 
 function hideAppModal() {
     const appModal = document.getElementById('app-modal');
@@ -244,7 +253,7 @@ window.hideAppModal = hideAppModal;
 
 // --- Evento Principal (Unificado) ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Verificar el estado del Banner de la App
+    // 1. Verificar el estado del Banner de la App (para que se muestre si es la primera vez)
     checkAppModalVisibility();
 
     // 2. Carga de Contenido
@@ -257,6 +266,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const rejectBtn = document.getElementById('reject-cookies');
 
     if (!consent) {
+        // Muestra el banner de cookies después de 1 segundo para no interrumpir la carga inicial
         setTimeout(openCookieBanner, 1000); 
     }
     
@@ -280,6 +290,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 5. Manejador de Evento para el botón de búsqueda
     const searchButton = document.getElementById('search-button'); 
     if (searchButton) {
+        // Usa searchNews, ya que está definido arriba
         searchButton.addEventListener('click', searchNews);
     }
 });
