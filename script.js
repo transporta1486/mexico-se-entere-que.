@@ -251,17 +251,16 @@ function checkAppModalVisibility() {
         appModal.style.display = 'flex';
     }
 }
-
-// NUEVO CÓDIGO MODIFICADO EN script.js
-function checkAppModalVisibility() {
+// La función que se llama cuando el usuario hace clic en el botón de cerrar ('&times;')
+function hideAppModal() {
     const appModal = document.getElementById('app-modal');
     if (appModal) {
-        // Siempre visible al cargar la página
-        appModal.style.display = 'flex'; 
+        // Solo la oculta para la sesión actual. 
+        // Si recarga, checkAppModalVisibility la hará visible de nuevo 
+        // si la PWA no está instalada.
+        appModal.style.display = 'none'; 
     }
-    // Eliminamos toda la lógica de localStorage
 }
-
 
 // --- Evento Principal (Unificado) ---
 document.addEventListener('DOMContentLoaded', () => {
