@@ -241,14 +241,15 @@ function checkAppModalVisibility() {
 }
 window.checkAppModalVisibility = checkAppModalVisibility; // Hacemos global para prueba si es necesario
 
-function hideAppModal() {
+// NUEVO CÓDIGO MODIFICADO EN script.js
+function checkAppModalVisibility() {
     const appModal = document.getElementById('app-modal');
     if (appModal) {
-        appModal.style.display = 'none';
-        localStorage.setItem('app-modal-seen', 'true'); 
+        // Siempre visible al cargar la página
+        appModal.style.display = 'flex'; 
     }
+    // Eliminamos toda la lógica de localStorage
 }
-window.hideAppModal = hideAppModal;
 
 
 // --- Evento Principal (Unificado) ---
