@@ -1,6 +1,4 @@
-// --- Carga de JSON y Renderizado ---
 
-async function getNewsData() {
 
     const newsJsonData = {
         "noticias_list": [
@@ -34,7 +32,7 @@ async function getNewsData() {
               "fecha": "2025-08-17",
               "ciudad": "Nacional",
               "autor": "Javier Huerta Martinez",
-              "destacada": true // ESTA APARECERÁ EN EL CARRUSEL PRINCIPAL
+              "destacada": true 
             },
             {
               "id": "c7d6e5f4-3g2h-1i0j-k9l8-m7n6o5p4q3r2",
