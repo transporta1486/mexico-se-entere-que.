@@ -35,29 +35,87 @@ function alertMessage(message) {
     }, 3000);
 }
 
-// --- Carga de JSON y Renderizado ---
+// --- Carga de JSON y Datos ---
 
 async function getNewsData() {
-    // **NOTA IMPORTANTE:**
-    // ASEGÚRATE DE QUE TUS NOTICIAS REALES TENGAN UN 'id' ÚNICO Y EL CAMPO 'categoria'
-    
+    // **TU JSON DE NOTICIAS COMPLETO Y ACTUALIZADO**
     const newsJsonData = {
         "noticias_list": [
-            // Ejemplos de noticias con IDs y categorías
-            { "id": "2e3c0d60", "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco", "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos...", "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg", "categoria": "policía", "autor": "Javier Huerta Martinez", "destacada": false },
-            { "id": "a9b8c7d6", "titulo": "Baches afectan casi el 80 % del Valle de México", "resumen": "Denuncias ciudadanas revelan que los baches se han convertido en un problema crítico y generalizado...", "imagen": "https://i.postimg.cc/xdr6Ct7j/FB-IMG-1755466516879.jpg", "categoria": "infraestructura", "autor": "Javier Huerta Martinez", "destacada": false },
-            { "id": "1f2g3h4i", "titulo": "🚨 Detienen a ex-funcionario en Naucalpan por desvío de fondos", "resumen": "La Fiscalía anticorrupción ejecutó una orden de aprehensión contra el ex-titular de obras públicas.", "imagen": "https://i.postimg.cc/sX5dxMKq/f3eed-16-08-2025-bety-1.jpg", "categoria": "naucalpan", "autor": "Javier Huerta Martinez", "destacada": true },
-            { "id": "c7d6e5f4", "titulo": "Tragedia en Atizapán: Fuerte choque en la Calzada San Mateo", "resumen": "Dos vehículos impactados dejan saldo de dos heridos graves y tráfico denso.", "imagen": "https://i.postimg.cc/d08j8525/telefericotorreonsl-312b03dd-focus-0-0-1200-600.webp", "categoria": "atizapan", "autor": "Redacción", "destacada": false },
-            { "id": "b8c7d6e5", "titulo": "Nuevo parque ecológico inaugurado en Tlalnepantla", "resumen": "El gobierno municipal celebra la apertura de una nueva área verde en la zona poniente.", "imagen": "https://i.postimg.cc/J4nx9c8h/incendio-consume-nueve-locales-en-un-mercado-de-monterrey-2496html-incendio-nljpg-8123html-f0dbfbc7.webp", "categoria": "tlalnepantla", "autor": "Redacción", "destacada": false },
-            { "id": "f9g0h1i2", "titulo": "Feria del empleo en Cuautitlán Izcalli con más de 50 empresas", "resumen": "Oportunidades de trabajo para jóvenes y adultos en la zona industrial de Izcalli.", "imagen": "https://placehold.co/600x338/26A69A/FFFFFF?text=Empleo+Izcalli", "categoria": "izcalli", "autor": "Redacción", "destacada": false },
-            { "id": "j3k4l5m6", "titulo": "Vecinos de Nicolás Romero denuncian falta de agua por 4 días", "resumen": "Problemas con el suministro afectan a varias colonias; el ayuntamiento promete soluciones inmediatas.", "imagen": "https://placehold.co/600x338/546E7A/FFFFFF?text=Agua+NR", "categoria": "nicolas-romero", "autor": "Vecinos", "destacada": false }
+            {
+              "id": "2e3c0d60-7a5d-4f1f-a0b2-7c3d4e5f6g7h", 
+              "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco",
+              "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos en su domicilio de Temixco, Morelos. La Fiscalía estatal ha abierto una investigación. Ochoa, originario de Mazatlán, Sinaloa, había sido señalado en varios volantes por su presunta conexión con el Cártel de Sinaloa, específicamente con la facción de 'Los Chapitos'. Reportes recientes indican que la muerte del influencer, que era conocido por su contenido en redes sociales y por una entrevista reciente con la periodista Adela Micha, ha generado especulaciones sobre un ajuste de cuentas. La familia de la víctima no ha emitido una declaración oficial sobre lo ocurrido.",
+              "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg",
+              "categoria": "policía", 
+              "fecha": "2025-08-17",
+              "ciudad": "Atizapán",
+              "autor": "Javier Huerta Martinez",
+              "destacada": false
+            },
+            {
+              "id": "a9b8c7d6-e5f4-3g2h-1i0j-k9l8m7n6o5p4",
+              "titulo": "Baches afectan casi el 80 % del Valle de México, según denunciantes",
+              "resumen": "Denuncias ciudadanas, apoyadas por imágenes y videos, revelan que los baches se han convertido en un problema crítico y generalizado en el Valle de México, afectando aproximadamente el 80% de las vialidades. Municipios como Ecatepec y Nezahualcóyotl, así como diversas alcaldías de la Ciudad de México, reportan un aumento en la cantidad de hoyos en sus calles. Este deterioro vial no solo causa daños mecánicos a los vehículos, sino que también genera un gran descontento entre los habitantes. A pesar de los programas de bacheo y las aplicaciones de reporte, muchos residentes señalan que las reparaciones son insuficientes y de baja calidad, o que simplemente no se realizan a tiempo, dejando las calles en un estado deplorable.",
+              "imagen": "https://i.postimg.cc/xdr6Ct7j/FB-IMG-1755466516879.jpg",
+              "categoria": "infraestructura",
+              "fecha": "2025-08-17",
+              "ciudad": "Nacional",
+              "autor": "Javier Huerta Martinez",
+              "destacada": false
+            },
+            {
+              "id": "1f2g3h4i-5j6k-7l8m-9n0o-p1q2r3s4t5u6",
+              "titulo": "Familia de AMLO en el foco mediático tras rumores de mudanza presidencial",
+              "resumen": "Versiones sin confirmar, que circulan principalmente en redes sociales, han desatado una ola de especulaciones sobre una supuesta mudanza de la familia del expresidente Andrés Manuel López Obrador. Los rumores han captado la atención mediática y han generado debates sobre la vida privada de la familia presidencial. Algunos informes sugieren que la familia podría estar planificando una mudanza al extranjero, posiblemente a España, lo que ha revivido discusiones sobre la seguridad y los movimientos del exmandatario y sus familiares. Hasta el momento, no se ha emitido ninguna declaración oficial que confirme o desmienta estos rumores.",
+              "imagen": "https://i.postimg.cc/sX5dxMKq/f3eed-16-08-2025-bety-1.jpg",
+              "categoria": "política",
+              "fecha": "2025-08-17",
+              "ciudad": "Nacional",
+              "autor": "Javier Huerta Martinez",
+              "destacada": true 
+            },
+            {
+              "id": "c7d6e5f4-3g2h-1i0j-k9l8-m7n6o5p4q3r2",
+              "titulo": "🚨 México se entere qué: Rescatan a 15 personas atrapadas en Teleférico de Torreón",
+              "resumen": "Momentos de tensión se vivieron en Torreón, Coahuila, cuando una falla mecánica dejó varadas a 15 personas en las góndolas del teleférico de la ciudad. Elementos de Protección Civil y bomberos realizaron un impresionante operativo de rescate que duró varias horas. Todos los tripulantes fueron puestos a salvo sin lesiones graves, aunque algunos presentaron crisis nerviosa. El incidente ha desatado debate en redes sociales sobre la seguridad de este tipo de transportes turísticos en México.",
+              "imagen": "https://i.postimg.cc/d08j8525/telefericotorreonsl-312b03dd-focus-0-0-1200-600.webp",
+              "categoria": "sucesos",
+              "fecha": "2025-08-17",
+              "ciudad": "Nacional",
+              "autor": "",
+              "destacada": false
+            },
+            {
+              "id": "b8c7d6e5-f4g3-h2i1-j0k9-l8m7n6o5p4q3",
+              "titulo": "🔥 México se entere qué: Incendio arrasa mercado en Monterrey",
+              "resumen": "Un fuerte incendio consumió gran parte de un mercado popular en Monterrey durante la madrugada. Testigos relataron que las llamas se propagaron con rapidez debido a materiales inflamables en los locales. Bomberos de varios municipios llegaron para sofocar el siniestro, que dejó pérdidas millonarias y al menos 40 locales afectados. Aunque no se reportaron víctimas mortales, el hecho ha encendido la indignación ciudadana ante la falta de medidas de prevención y control en mercados municipales.",
+              "imagen": "https://i.postimg.cc/J4nx9c8h/incendio-consume-nueve-locales-en-un-mercado-de-monterrey-2496html-incendio-nljpg-8123html-f0dbfbc7.webp",
+              "categoria": "sociedad",
+              "fecha": "2025-08-17",
+              "ciudad": "Nacional",
+              "autor": "",
+              "destacada": false
+            },
+            // NOTICIA DE EJEMPLO LOCAL (PARA VER EL FILTRADO)
+            {
+                "id": "new-atizapan-001",
+                "titulo": "Asaltan restaurante de comida rápida en Las Alamedas de Atizapán",
+                "resumen": "Un grupo de tres sujetos armados irrumpió en el establecimiento de hamburguesas a las 9 PM. Se llevaron dinero de la caja y pertenencias de los clientes. La policía municipal inició una persecución.",
+                "imagen": "https://placehold.co/1200x600/FF0000/FFFFFF?text=ATIZAPAN+ALARMA",
+                "categoria": "atizapan", 
+                "fecha": "2025-11-25",
+                "ciudad": "Atizapán",
+                "autor": "Redacción Policía",
+                "destacada": true 
+            }
         ]
     };
     
     return newsJsonData.noticias_list || [];
 }
 
-// **MODIFICADA: Ahora crea el enlace a noticia.html**
+// --- Renderizado de Listas y Carrusel ---
+
 function renderNews(newsList, containerId) {
     const newsContainer = document.getElementById(containerId);
     if (!newsContainer) return;
@@ -72,15 +130,15 @@ function renderNews(newsList, containerId) {
         const safeTitle = escapeHtml(news.titulo || 'Noticia');
         const isCarousel = containerId === 'carousel-inner';
         
-        // URL de la Noticia Individual
+        // URL de la Noticia Individual: crucial para cargar el artículo
         const newsUrl = `noticia.html?id=${news.id}`; 
         
         const articleContent = isCarousel ? `
             <a href="${newsUrl}" class="carousel-link">
-                <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
+                <img src="${news.imagen || 'https://via.placeholder.co/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
                 <div class="carousel-content">
                     <h3>${safeTitle}</h3>
-                    <p>${escapeHtml(news.resumen)}</p>
+                    <p>${escapeHtml(news.resumen).substring(0, 150)}...</p>
                     <div class="author-info">
                         <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
                     </div>
@@ -90,9 +148,9 @@ function renderNews(newsList, containerId) {
         ` : `
             <article>
                 <a href="${newsUrl}">
-                    <img src="${news.imagen || 'https://via.placeholder.com/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
+                    <img src="${news.imagen || 'https://via.placeholder.co/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
                     <h4>${safeTitle}</h4>
-                    <p>${escapeHtml(news.resumen)}</p>
+                    <p>${escapeHtml(news.resumen).substring(0, 100)}...</p>
                 </a>
                 <div class="author-info">
                     <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
@@ -113,7 +171,7 @@ function renderNews(newsList, containerId) {
 }
 
 
-// Función unificada para cargar noticias filtradas por categoría
+// Función para filtrar noticias por categoría (p. ej., atizapan)
 async function loadFilteredNews(category, containerId) {
     const noticias = await getNewsData();
     let filteredNews = noticias;
@@ -122,26 +180,30 @@ async function loadFilteredNews(category, containerId) {
         filteredNews = noticias.filter(n => n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
     }
     
+    // Muestra solo las 6 primeras noticias
     renderNews(filteredNews.slice(0, 6), containerId);
 }
 
-// Función unificada para cargar el carrusel filtrado por categoría
+// Función para cargar el carrusel filtrado por categoría
 async function loadFilteredCarousel(category) {
     const noticias = await getNewsData();
     
     let destacadas = noticias;
     
     if (category) {
+        // Primero intenta filtrar por destacada Y categoría
         destacadas = noticias.filter(n => n.destacada && n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
         
+        // Si no hay destacadas específicas, usa cualquier noticia de esa categoría
         if (destacadas.length === 0) {
             destacadas = noticias.filter(n => n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
         }
     } else {
-        // Si no hay categoría (index.html), usar todas las destacadas
+        // index.html: usar todas las destacadas
         destacadas = noticias.filter(n => n.destacada);
     }
     
+    // Si no encuentra destacadas, usa las 3 primeras noticias generales para evitar un carrusel vacío
     const lista = destacadas.length ? destacadas.slice(0, 3) : noticias.slice(0, 3);
     
     renderNews(lista, 'carousel-inner');
@@ -157,7 +219,10 @@ async function loadFilteredCarousel(category) {
     }
 }
 
-// Función para obtener un parámetro de la URL
+
+// --- Lógica de Artículo Individual (noticia.html) ---
+
+// Función para obtener un parámetro de la URL (ej. el ID)
 function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -165,7 +230,6 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-// **NUEVA LÓGICA DE CARGA DE ARTÍCULO ÚNICO**
 async function loadSingleArticle(id) {
     const noticias = await getNewsData();
     const article = noticias.find(n => n.id === id);
@@ -180,29 +244,31 @@ async function loadSingleArticle(id) {
         return;
     }
 
+    // Formateo de Fecha
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    let displayDate = article.fecha ? new Date(article.fecha).toLocaleDateString('es-MX', dateOptions) : 'Fecha Desconocida';
+    
     const safeTitle = escapeHtml(article.titulo);
-    titleElement.textContent = safeTitle + ' | México Se Enteré Qué'; // Actualiza el título de la pestaña
+    titleElement.textContent = safeTitle + ' | México Se Enteré Qué'; 
 
     container.innerHTML = `
         <h1>${safeTitle}</h1>
         <div class="article-meta">
-            <span>📅 ${new Date().toLocaleDateString('es-MX')}</span>
+            <span>📅 Publicado: ${displayDate}</span>
+            <span>📍 Ciudad: ${escapeHtml(article.ciudad || 'No especificado')}</span>
             <span>✍️ Por: ${escapeHtml(article.autor || 'Redacción')}</span>
-            <span>🏷️ Categoría: ${escapeHtml(article.categoria)}</span>
         </div>
+        
         <img src="${article.imagen || 'https://via.placeholder.co/1200x600?text=Imagen+Principal'}" alt="${safeTitle}" class="article-image">
-        <p class="article-summary">${escapeHtml(article.resumen)}</p>
         
         <section class="article-body">
-            <h3>Contenido completo</h3>
-            <p>Este es el cuerpo del artículo. En un sistema real, aquí iría el texto completo y detallado de la noticia que cargaste con el ID <strong>${id}</strong>. </p>
-            <p>Para esta demostración, el contenido completo es el mismo que el resumen, pero en un entorno real cargarías un campo adicional (ej. "contenido_completo") de tu JSON.</p>
+            <p>${escapeHtml(article.resumen)}</p>
         </section>
 
         <button class="share-btn large" onclick="shareArticle('${safeTitle}')">Compartir Artículo</button>
     `;
     
-    // Cargar noticias relacionadas
+    // Cargar noticias relacionadas (3 de la misma categoría, excluyendo la actual)
     const relatedNews = noticias
         .filter(n => n.categoria === article.categoria && n.id !== article.id)
         .slice(0, 3);
@@ -250,9 +316,15 @@ function shareArticle(title) {
     const url = window.location.href;
     const text = `¡Mira esta noticia en México Se Enteré Qué!: ${title}`;
     if (navigator.share) {
+        // API nativa de compartir
         navigator.share({ title, text, url }).catch(() => {});
     } else {
-        alertMessage(`Copia este enlace para compartir: ${url}`);
+        // Fallback: Copiar enlace
+        navigator.clipboard.writeText(url).then(() => {
+            alertMessage(`Enlace copiado al portapapeles: ${url}`);
+        }).catch(() => {
+            alertMessage(`Copia este enlace para compartir: ${url}`);
+        });
     }
 }
 window.shareArticle = shareArticle;
@@ -290,7 +362,7 @@ function toggleSearch() {
 }
 window.toggleSearch = toggleSearch;
 
-// --- Cookies y App Modal ---
+// --- Cookies y App Modal (PWA) ---
 
 function openCookieBanner() {
     const banner = document.getElementById('cookie-banner');
@@ -315,8 +387,7 @@ function checkAppModalVisibility() {
     const appModal = document.getElementById('app-modal');
     if (!appModal) return;
 
-    // Solo muestra el banner si no está instalada la PWA
-    if (isPWAInstalled()) {
+    if (isPWAInstalled() || localStorage.getItem('hide-app-modal') === 'true') {
         appModal.style.display = 'none';
     } else {
         appModal.style.display = 'flex';
@@ -327,6 +398,7 @@ function hideAppModal() {
     const appModal = document.getElementById('app-modal');
     if (appModal) {
         appModal.style.display = 'none'; 
+        localStorage.setItem('hide-app-modal', 'true'); // Ocultar permanentemente
     }
 }
 window.hideAppModal = hideAppModal;
@@ -388,7 +460,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (path.includes('naucalpan.html')) {
             categoryToFilter = 'naucalpan';
         }
-        // Si es index.html, categoryToFilter es null y carga las destacadas.
+        // Si es index.html, categoryToFilter es null y carga las destacadas/generales.
 
         loadFilteredNews(categoryToFilter, 'news-container');
         loadFilteredCarousel(categoryToFilter);
@@ -410,7 +482,6 @@ document.addEventListener('DOMContentLoaded', () => {
         acceptBtn.addEventListener('click', () => {
             localStorage.setItem('cookies-consent', 'accepted');
             hideCookieBanner();
-            // Ya que aceptó, el banner de la app no debería salir hasta que borre el caché
             hideAppModal(); 
             alertMessage('Cookies aceptadas.');
         });
