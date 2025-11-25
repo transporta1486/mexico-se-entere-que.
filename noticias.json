@@ -1,7 +1,7 @@
 // --- Carga de JSON y Renderizado ---
 
 async function getNewsData() {
-    // **USANDO EL JSON COMPLETO PROPORCIONADO POR EL USUARIO**
+
     const newsJsonData = {
         "noticias_list": [
             {
@@ -9,8 +9,7 @@ async function getNewsData() {
               "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco",
               "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos en su domicilio de Temixco, Morelos. La Fiscalía estatal ha abierto una investigación. Ochoa, originario de Mazatlán, Sinaloa, había sido señalado en varios volantes por su presunta conexión con el Cártel de Sinaloa, específicamente con la facción de 'Los Chapitos'. Reportes recientes indican que la muerte del influencer, que era conocido por su contenido en redes sociales y por una entrevista reciente con la periodista Adela Micha, ha generado especulaciones sobre un ajuste de cuentas. La familia de la víctima no ha emitido una declaración oficial sobre lo ocurrido.",
               "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg",
-              "categoria": "policía", // Nota: Esta categoría NO es un municipio, solo aparecerá en la página principal.
-              "fecha": "2025-08-17",
+              "categoria": "policía", 
               "ciudad": "Atizapán",
               "autor": "Javier Huerta Martinez",
               "destacada": false
