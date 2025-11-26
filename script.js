@@ -2,25 +2,26 @@
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => { // Usar 'load' es más seguro que 'DOMContentLoaded'
         navigator.serviceWorker.register('./service-worker.js') // Usar ruta relativa './'
-            // ... el resto del código ...
+            // ... el resto del código de registro ...
     });
 }
 
 // Funciones para escapar caracteres especiales de una cadena HTML (Seguridad XSS)
 function escapeHtml(text) {
-    if (typeof text !== 'string') return '';
-    return text.replace(/[&<>"']/g, function(match) {
-        switch (match) {
-            case '&': return '&amp;';
-            case '<': return '&lt;';
-            case '>': return '&gt;';
-            case '"': return '&quot;';
-            case "'": return '&#039;';
-            default: return match;
-        }
-    });
-}
+    if (typeof text !== 'string') return '';
+    return text.replace(/[&<>"']/g, function(match) {
+        switch (match) {
+            case '&': return '&amp;';
+            case '<': return '&lt;';
+            case '>': return '&gt;';
+            case '"': return '&quot;';
+            case "'": return '&#039;';
+            default: return match;
+        }
+    });
+} // <--- ¡Esta llave de cierre y el punto y coma faltaban o estaban corruptos!
 
+// --- A partir de aquí sigue el resto de tu código JS: Funciones de Utilidad, getNewsData, etc. ---
 // --- Variables Globales ---
 let currentIndex = 0;
 let autoSlide;
