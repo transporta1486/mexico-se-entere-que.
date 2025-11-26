@@ -1,15 +1,13 @@
 // ===================================================
-// Bloque de registro del Service Worker (PWA)
-// ¡DEBE IR AL PRINCIPIO DEL ARCHIVO!
-// ===================================================
+
 if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
+    document.addEventListener('DOMContentLoaded', () => {
         navigator.serviceWorker.register('/service-worker.js')
             .then(reg => {
                 console.log('Service Worker registrado con éxito:', reg);
             })
             .catch(error => {
-                // Este es el error que estás viendo: InvalidStateError
+                // Si el error persiste, puede ser un problema con /service-worker.js o el entorno.
                 console.error('Fallo en el registro del Service Worker:', error);
             });
     });
