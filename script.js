@@ -36,10 +36,9 @@ function alertMessage(message) {
 }
 
 // --- Carga de JSON y Datos ---
-// --- Carga de JSON y Datos ---
 
 async function getNewsData() {
-    // **TU JSON DE NOTICIAS COMPLETO Y CORREGIDO**
+    // **TU JSON DE NOTICIAS COMPLETO Y FINALIZADO CON TODAS LAS NOTICIAS DE ATIZAPÁN**
     const newsJsonData = {
         "noticias_list": [
             {
@@ -97,7 +96,7 @@ async function getNewsData() {
               "autor": "",
               "destacada": false
             },
-            // NOTICIA DE EJEMPLO LOCAL (PARA VER EL FILTRADO)
+            // --- NOTICIAS LOCALES DE ATIZAPÁN (Anteriores) ---
             {
                 "id": "new-atizapan-001",
                 "titulo": "Asaltan restaurante de comida rápida en Las Alamedas de Atizapán",
@@ -109,24 +108,58 @@ async function getNewsData() {
                 "autor": "Redacción Policía",
                 "destacada": true 
             },
-            // >>> NOTICIA DE RONDÍN EN JARDINES (CORREGIDA)
             {
                 "id": "as-seg-20251125", 
                 "titulo": "Implementan nuevo rondín de vigilancia en Jardines de Atizapán",
                 "resumen": "Vecinos y autoridades acuerdan establecer patrullajes nocturnos ante el aumento de robos a casa habitación. El operativo durará 90 días.",
                 "imagen": "https://miblog.com/imagenes/patrullaje_jardines.jpg", 
-                "categoria": "atizapan", // CLAVE PARA EL FILTRADO
+                "categoria": "atizapan", 
                 "fecha": "2025-11-25",
                 "ciudad": "Atizapán",
                 "autor": "Redacción Atizapán",
                 "destacada": false 
+            },
+            // --- NOTICIAS LOCALES DE ATIZAPÁN (NUEVAS) ---
+            {
+                "id": "ati-seg-1201",
+                "titulo": "Refuerzan vigilancia en la zona escolar de Lomas de Atizapán",
+                "resumen": "La Dirección de Seguridad Pública implementó un operativo de reforzamiento en las inmediaciones de escuelas primarias y secundarias. La medida busca prevenir el robo a estudiantes y padres de familia en horas pico. Se han desplegado 10 elementos adicionales y 4 patrullas en los principales accesos viales.",
+                "imagen": "https://placehold.co/1200x600/0033CC/FFFFFF?text=ATIZAPAN+ESCUELAS",
+                "categoria": "atizapan",
+                "fecha": "2025-11-25",
+                "ciudad": "Atizapán",
+                "autor": "Javier H. Martínez",
+                "destacada": false
+            },
+            {
+                "id": "ati-inf-1202",
+                "titulo": "Vecinos de Las Alamedas exigen mantenimiento urgente al alumbrado público",
+                "resumen": "El 60% de las luminarias en el Fraccionamiento Las Alamedas están reportadas como fuera de servicio, lo que ha elevado la preocupación por la seguridad nocturna. Habitantes exigen una respuesta inmediata del ayuntamiento para rehabilitar el servicio, señalando que la falta de luz es un foco de inseguridad y accidentes.",
+                "imagen": "https://placehold.co/1200x600/808080/FFFFFF?text=LUMINARIAS+ALAMEDAS",
+                "categoria": "atizapan",
+                "fecha": "2025-11-24",
+                "ciudad": "Atizapán",
+                "autor": "Redacción Infraestructura",
+                "destacada": true
+            },
+            {
+                "id": "ati-soc-1203",
+                "titulo": "Exitosa jornada de esterilización canina gratuita en la colonia México 86",
+                "resumen": "El Centro de Control Canino y Bienestar Animal de Atizapán realizó una jornada masiva de esterilización y vacunación en la colonia México 86, atendiendo a más de 150 mascotas. La campaña busca fomentar la tenencia responsable y controlar la población de animales en situación de calle. Vecinos agradecen la iniciativa y piden que se extienda a otras zonas del municipio.",
+                "imagen": "https://placehold.co/1200x600/00CC00/FFFFFF?text=ESTERILIZACIÓN+ATIZAPÁN",
+                "categoria": "atizapan",
+                "fecha": "2025-11-23",
+                "ciudad": "Atizapán",
+                "autor": "Colaborador Social",
+                "destacada": false
             }
         ]
     };
     
     return newsJsonData.noticias_list || [];
 }
-// --- Renderizado de Listas y Carrusel ---
+
+// --- Renderizado de Listas y Carrusel (CÓDIGO SIN CAMBIOS) ---
 
 function renderNews(newsList, containerId) {
     const newsContainer = document.getElementById(containerId);
@@ -232,7 +265,7 @@ async function loadFilteredCarousel(category) {
 }
 
 
-// --- Lógica de Artículo Individual (noticia.html) ---
+// --- Lógica de Artículo Individual (noticia.html) (CÓDIGO SIN CAMBIOS) ---
 
 // Función para obtener un parámetro de la URL (ej. el ID)
 function getUrlParameter(name) {
@@ -289,7 +322,7 @@ async function loadSingleArticle(id) {
 }
 
 
-// --- Carrusel Control ---
+// --- Carrusel Control (CÓDIGO SIN CAMBIOS) ---
 function moveCarousel(direction) {
     const items = document.querySelectorAll('.carousel-item');
     if (items.length <= 1) return;
@@ -307,7 +340,7 @@ function moveCarousel(direction) {
 }
 window.moveCarousel = moveCarousel;
 
-// --- Búsqueda ---
+// --- Búsqueda (CÓDIGO SIN CAMBIOS) ---
 async function searchNews() {
     const searchInput = document.getElementById('search');
     if (!searchInput) return;
@@ -323,7 +356,7 @@ async function searchNews() {
 }
 window.searchNews = searchNews;
 
-// --- Compartir ---
+// --- Compartir (CÓDIGO SIN CAMBIOS) ---
 function shareArticle(title) {
     const url = window.location.href;
     const text = `¡Mira esta noticia en México Se Enteré Qué!: ${title}`;
@@ -341,7 +374,7 @@ function shareArticle(title) {
 }
 window.shareArticle = shareArticle;
 
-// --- Menú / Búsqueda (UI) ---
+// --- Menú / Búsqueda (UI) (CÓDIGO SIN CAMBIOS) ---
 function toggleMenu() {
     const navMenu = document.getElementById('nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
@@ -374,7 +407,7 @@ function toggleSearch() {
 }
 window.toggleSearch = toggleSearch;
 
-// --- Cookies y App Modal (PWA) ---
+// --- Cookies y App Modal (PWA) (CÓDIGO CORREGIDO) ---
 
 function openCookieBanner() {
     const banner = document.getElementById('cookie-banner');
@@ -415,7 +448,7 @@ function hideAppModal() {
 }
 window.hideAppModal = hideAppModal;
 
-// --- LÓGICA DE INSTALACIÓN PWA (Smart Banner) ---
+// --- LÓGICA DE INSTALACIÓN PWA (Smart Banner) (CÓDIGO SIN CAMBIOS) ---
 
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
@@ -491,10 +524,11 @@ document.addEventListener('DOMContentLoaded', () => {
     
     // Manejadores de eventos de cookies y búsqueda
     if (acceptBtn) {
+        // *** LÍNEA CORREGIDA: Eliminamos hideAppModal() aquí ***
         acceptBtn.addEventListener('click', () => {
             localStorage.setItem('cookies-consent', 'accepted');
             hideCookieBanner();
-            hideAppModal(); 
+            // ¡Ya no se oculta el App Modal al aceptar cookies!
             alertMessage('Cookies aceptadas.');
         });
     }
