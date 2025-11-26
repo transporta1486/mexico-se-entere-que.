@@ -1,25 +1,25 @@
 // service-worker.js
 
-// Nombre de la caché y versión (cambiar esto fuerza una actualización)
-const CACHE_NAME = 'mexico-se-entere-que-v1';
+// Version de cache
+const CACHE_NAME = 'noticias-v1'; 
 
-// Evento de Instalación: El Service Worker se instala.
+// Evento 1: INSTALACIÓN
 self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Instalando...');
-    // Fuerza la activación inmediata del Service Worker nuevo
+    console.log('[Service Worker] Instalando.');
+    // Forzar activación inmediata para que el nuevo SW tome control.
     self.skipWaiting(); 
 });
 
-// Evento de Activación: El Service Worker toma el control.
+// Evento 2: ACTIVACIÓN
 self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] Activando...');
-    // Asegura que la página actual use el Service Worker
-    event.waitUntil(self.clients.claim()); 
+    console.log('[Service Worker] Activando.');
+    // Asegurar que todas las pestañas abiertas usen el Service Worker actual.
+    event.waitUntil(self.clients.claim());
 });
 
-// Evento Fetch: Define cómo manejar las solicitudes de red.
-// Por ahora, solo deja que todo pase por la red.
+// Evento 3: FETCH (para peticiones de red)
 self.addEventListener('fetch', (event) => {
-    // Si no definimos ninguna estrategia de caché, simplemente se usa la red
+    // Por ahora, simplemente dejamos que todo pase por la red.
+    // Esto es temporal hasta que implementes la estrategia de caché.
     event.respondWith(fetch(event.request));
 });
