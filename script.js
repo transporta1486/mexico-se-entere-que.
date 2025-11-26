@@ -1,8 +1,9 @@
+
 if ('serviceWorker' in navigator) {
-    document.addEventListener('DOMContentLoaded', () => {
-        // CÓDIGO CORREGIDO: Usar la ruta relativa (./) en lugar de la ruta absoluta (/)
-     // CORRECCIÓN APLICADA:
-navigator.serviceWorker.register('./service-worker.js')
+
+    window.addEventListener('load', () => { 
+
+        navigator.serviceWorker.register('./service-worker.js') 
             .then(reg => {
                 console.log('Service Worker registrado con éxito:', reg);
             })
@@ -11,7 +12,6 @@ navigator.serviceWorker.register('./service-worker.js')
             });
     });
 }
-
 
 // Funciones para escapar caracteres especiales de una cadena HTML (Seguridad XSS)
 function escapeHtml(text) {
