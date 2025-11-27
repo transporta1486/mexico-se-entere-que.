@@ -1,43 +1,63 @@
+// Nombre de la caché (incrementa la versión si cambias los archivos)
+const CACHE_NAME = 'noticias-pwa-v1.0.1';
 
-// service-worker.js
+// Lista de archivos que se deben precargar y guardar en caché
+const urlsToCache = [
+  '/', // Esto cachea el index.html
+  'index.html',
+  'style.css', // Asume que tienes este nombre para el CSS principal
+  'script.js',
+  // Archivos de manifiesto e iconos (asegúrate de que existan)
+  'manifest.json',
+  '/images/icons/icon-512x512.png', // Reemplaza con tus rutas reales de iconos
+  // Agrega otros recursos críticos como imágenes, fuentes o otros JS si los tienes.
+];
 
-// Evento 1: INSTALACIÓN
-self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Instalando.');
-    // Forzar activación inmediata para que el nuevo SW tome control.
-    event.waitUntil(self.skipWaiting()); // <-- CLAVE para saltar la espera
+// 1. EVENTO DE INSTALACIÓN: Al instalar la PWA, cachea todos los archivos esenciales
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then(cache => {
+        console.log('Service Worker: Cacheando archivos estáticos.');
+        return cache.addAll(urlsToCache);
+      })
+  );
 });
 
-// Evento 2: ACTIVACIÓN
-self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] Activando y reclamando clientes.');
-    // Asegurar que todas las pestañas abiertas usen el Service Worker actual.
-    event.waitUntil(self.clients.claim()); // <-- CLAVE para tomar control inmediatamente
+// 2. EVENTO DE FETCH: Intercepta peticiones para servir archivos desde la caché
+self.addEventListener('fetch', event => {
+  // Evita interceptar peticiones de Firebase/Firestore para que los datos sean siempre frescos
+  if (event.request.url.includes('googleapis.com') || event.request.url.includes('gstatic.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
+    return fetch(event.request);
+  }
+
+  // Estrategia Cache-first para recursos estáticos:
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        // Si el archivo está en caché, lo devuelve
+        if (response) {
+          return response;
+        }
+        // Si no está, lo solicita a la red
+        return fetch(event.request);
+      })
+  );
 });
 
-// ... el resto de tu código fetch, etc.
-// service-worker.js
-
-// Version de cache
-const CACHE_NAME = 'noticias-v1'; 
-
-// Evento 1: INSTALACIÓN
-self.addEventListener('install', (event) => {
-    console.log('[Service Worker] Instalando.');
-    // Forzar activación inmediata para que el nuevo SW tome control.
-    self.skipWaiting(); 
-});
-
-// Evento 2: ACTIVACIÓN
-self.addEventListener('activate', (event) => {
-    console.log('[Service Worker] Activando.');
-    // Asegurar que todas las pestañas abiertas usen el Service Worker actual.
-    event.waitUntil(self.clients.claim());
-});
-
-// Evento 3: FETCH (para peticiones de red)
-self.addEventListener('fetch', (event) => {
-    // Por ahora, simplemente dejamos que todo pase por la red.
-    // Esto es temporal hasta que implementes la estrategia de caché.
-    event.respondWith(fetch(event.request));
+// 3. EVENTO DE ACTIVACIÓN: Limpia las cachés antiguas para ahorrar espacio
+self.addEventListener('activate', event => {
+  const cacheWhitelist = [CACHE_NAME];
+  event.waitUntil(
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
+            console.log('Service Worker: Eliminando caché antigua:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    })
+  );
 });
