@@ -1,102 +1,310 @@
-// ===================================================
-// INICIALIZACIÓN Y REGISTRO DEL SERVICE WORKER (PWA)
-// ===================================================
-// Usamos window.addEventListener('load') para asegurar que el registro del Service Worker
-// se ejecute cuando toda la página está completamente cargada, evitando el InvalidStateError.
+// =================================================================
+// IMPORTS DE FIREBASE (Necesitas estas etiquetas en tu index.html)
+// <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+// <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+// =================================================================
 
+// =================================================================
+// DECLARACIONES GLOBALES
+// =================================================================
 let currentIndex = 0;
 let autoSlide;
 let deferredPrompt; 
+let newsData = []; // Caché local para la búsqueda
 
-if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-        // RUTA CORREGIDA: Usamos './' para GitHub Pages
-navigator.serviceWorker.register('/mexico-se-entere/service-worker.js')
-            .then(reg => {
-                console.log('Service Worker registrado con éxito:', reg);
-            })
-            .catch(error => {
-                console.error('Fallo en el registro del Service Worker:', error);
-            });
-        
-        // ===================================================
-        // --- LÓGICA PRINCIPAL (Ahora dentro de window.load) ---
-        // ===================================================
+// =================================================================
+// 1. CONFIGURACIÓN DE FIREBASE E INICIALIZACIÓN
+// =================================================================
 
-        // 1. Detección de la página actual
-        const path = window.location.pathname;
+// Credenciales copiadas de la Consola de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBPbCmeaCd6sYJoO_9JqEWzWievDw_fFwc", 
+    authDomain: "noticiaspwa-58270.firebaseapp.com",
+    projectId: "noticiaspwa-58270",
+    storageBucket: "noticiaspwa-58270.firebasestorage.app",
+    messagingSenderId: "758477934480",
+    appId: "1:758477934480:web:10f781e64eff91b21a2d15",
+};
+
+// Inicializa Firebase y crea la instancia de Firestore
+// NOTA: firebase.initializeApp solo funcionará si los scripts de Firebase están cargados en el HTML.
+// Ya no es necesario inicializar aquí si lo haces con los scripts en el HTML. 
+// Asumiremos que el objeto 'firebase' está disponible globalmente.
+// Si no lo está, esta línea causará un error. 
+// Si estás usando los scripts v8.10.0, déjalo así.
+
+try {
+    firebase.initializeApp(firebaseConfig);
+} catch (e) {
+    console.warn("Firebase ya inicializado o la librería no está cargada:", e);
+}
+
+const db = firebase.firestore();
+
+// =================================================================
+// 2. FUNCIÓN PARA CARGAR Y MOSTRAR NOTICIAS DESDE FIRESTORE
+// =================================================================
+
+/**
+ * Carga las noticias desde Firestore, las guarda en newsData y las renderiza.
+ * @param {string} category El filtro de categoría ('todos' para todas).
+ * @param {string} containerId El ID del contenedor HTML para la lista principal.
+ */
+async function loadFilteredNewsFromFirestore(category = 'todos', containerId = 'news-container') {
+    const newsContainer = document.getElementById(containerId);
+    if (!newsContainer) return;
+    
+    newsContainer.innerHTML = '<div class="loading-spinner">Cargando noticias...</div>'; 
+
+    try {
+        let query = db.collection('noticias')
+                      .orderBy('fecha', 'desc')
+                      .limit(6); // Limita a las 6 noticias más recientes
+
+        // Aplica el filtro de categoría si no es 'todos'
+        if (category !== 'todos') {
+            query = query.where('categoria', '==', category.toLowerCase());
+        }
+
+        const snapshot = await query.get();
+        // Mapea los documentos para extraer solo los datos
+        const news = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        newsData = news; // Guarda los datos para la búsqueda
+
+        // Limpia y renderiza
+        newsContainer.innerHTML = ''; 
         
-        if (path.includes('noticia.html')) {
-            // **LÓGICA PARA PÁGINA DE NOTICIA INDIVIDUAL**
-            const articleId = getUrlParameter('id');
-            if (articleId) {
-                loadSingleArticle(articleId);
-            } else {
-                document.getElementById('news-article-container').innerHTML = '<h2>ID de noticia no proporcionado.</h2>';
+        if (news.length === 0) {
+            newsContainer.innerHTML = '<p class="no-news">No se encontraron noticias disponibles en esta sección.</p>';
+            return;
+        }
+
+        renderNewsList(news, newsContainer);
+
+    } catch (error) {
+        console.error("Error al cargar las noticias desde Firestore: ", error);
+        newsContainer.innerHTML = '<h2>Error al conectar con la base de datos. (Revisa la consola)</h2>';
+    }
+}
+
+/**
+ * Carga los artículos destacados para el carrusel.
+ * @param {string} category El filtro de categoría ('todos' para todas).
+ */
+async function loadCarouselFromFirestore(category = 'todos') {
+    const carouselInner = document.getElementById('carousel-inner');
+    if (!carouselInner) return;
+    
+    carouselInner.innerHTML = '<div class="loading-spinner">Cargando destacados...</div>';
+
+    try {
+        let query = db.collection('noticias')
+                      .where('destacada', '==', true)
+                      .orderBy('fecha', 'desc');
+
+        if (category !== 'todos') {
+             query = query.where('categoria', '==', category.toLowerCase());
+        }
+
+        const snapshot = await query.get();
+        let destacadas = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+        // Si no hay destacadas específicas, intenta cargar las 3 últimas sin filtro de categoría, o las 3 primeras generales.
+        if (destacadas.length === 0) {
+            console.warn(`No hay destacadas para la categoría "${category}". Cargando 3 últimas noticias generales.`);
+            const generalQuery = db.collection('noticias').orderBy('fecha', 'desc').limit(3);
+            const generalSnapshot = await generalQuery.get();
+            destacadas = generalSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        }
+
+        if (destacadas.length === 0) {
+            carouselInner.innerHTML = '<p class="no-news-carousel">No hay noticias destacadas.</p>';
+            return;
+        }
+
+        renderCarouselItems(destacadas.slice(0, 3), carouselInner);
+        
+        // Inicia el carrusel
+        const items = document.querySelectorAll('.carousel-item');
+        if (items.length > 0) {
+            items[0].classList.add('active');
+            clearInterval(autoSlide);
+            if (items.length > 1) {
+                autoSlide = setInterval(() => moveCarousel(1), 5000);
             }
-            
-        } else {
-            // **LÓGICA PARA PÁGINAS DE LISTADO (Index, Atizapán, etc.)**
-            let categoryToFilter = null;
-            
-            // Mapea la URL a la categoría de noticias (usa minúsculas)
-            if (path.includes('atizapan.html')) {
-                categoryToFilter = 'atizapan';
-            } else if (path.includes('tlalnepantla.html')) {
-                categoryToFilter = 'tlalnepantla';
-            } else if (path.includes('cuatitlan-izcalli.html')) {
-                categoryToFilter = 'izcalli'; 
-            } else if (path.includes('nicolas-romero.html')) {
-                categoryToFilter = 'nicolas-romero'; 
-            } else if (path.includes('naucalpan.html')) {
-                categoryToFilter = 'naucalpan';
-            }
-            
-            loadFilteredNews(categoryToFilter, 'news-container');
-            loadFilteredCarousel(categoryToFilter);
         }
+    } catch (error) {
+        console.error("Error al cargar el carrusel desde Firestore: ", error);
+        carouselInner.innerHTML = '<p class="no-news-carousel">Error al cargar el carrusel.</p>';
+    }
+}
+
+/**
+ * Carga un artículo individual para la página noticia.html.
+ * @param {string} id El ID del documento de Firestore.
+ */
+async function loadSingleArticleFromFirestore(id) {
+    const container = document.getElementById('news-article-container');
+    const titleElement = document.querySelector('title');
+    if (!container) return;
+    
+    container.innerHTML = '<h2>Cargando artículo...</h2>';
+
+    try {
+        const docRef = db.collection('noticias').doc(id);
+        const doc = await docRef.get();
+
+        if (!doc.exists) {
+            container.innerHTML = '<h2>🚨 Error 404: Noticia No Encontrada</h2><p>Lo sentimos, el artículo solicitado no existe o fue eliminado.</p>';
+            titleElement.textContent = 'Error 404 | México Se Enteré Qué';
+            return;
+        }
+
+        const article = { id: doc.id, ...doc.data() };
         
-        // 2. Lógica de PWA, Cookies, Búsqueda (Se ejecuta en todas las páginas)
-        checkAppModalVisibility();
-
-        const consent = localStorage.getItem('cookies-consent');
-        const acceptBtn = document.getElementById('accept-cookies');
-        const rejectBtn = document.getElementById('reject-cookies');
-
-        if (!consent) {
-            setTimeout(openCookieBanner, 1000); 
-        }
+        // Formateo de Fecha
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        // Si la fecha es un Timestamp de Firestore
+        let displayDate = article.fecha ? article.fecha.toDate().toLocaleDateString('es-MX', dateOptions) : 'Fecha Desconocida';
         
-        // Manejadores de eventos de cookies y búsqueda
-        if (acceptBtn) {
-            acceptBtn.addEventListener('click', () => {
-                localStorage.setItem('cookies-consent', 'accepted');
-                hideCookieBanner();
-                alertMessage('Cookies aceptadas.');
-            });
-        }
-
-        if (rejectBtn) {
-            rejectBtn.addEventListener('click', () => {
-                localStorage.setItem('cookies-consent', 'rejected');
-                hideCookieBanner();
-                alertMessage('Cookies rechazadas.');
-            });
-        }
+        const safeTitle = escapeHtml(article.titulo);
+        titleElement.textContent = safeTitle + ' | México Se Enteré Qué'; 
         
-        const searchButton = document.getElementById('search-button'); 
-        if (searchButton) {
-            searchButton.addEventListener('click', searchNews);
-        }
+        container.innerHTML = `
+            <h1>${safeTitle}</h1>
+            <div class="article-meta">
+                <span>📅 Publicado: ${displayDate}</span>
+                <span>📍 Ciudad: ${escapeHtml(article.ciudad || 'No especificado')}</span>
+                <span>✍️ Por: ${escapeHtml(article.autor || 'Redacción')}</span>
+            </div>
+            
+            <img src="${article.imagen || 'https://placehold.co/1200x600/CCCCCC/333333?text=Imagen+Principal'}" alt="${safeTitle}" class="article-image">
+            
+            <section class="article-body">
+                <p>${escapeHtml(article.resumen)}</p>
+            </section>
 
+            <button class="share-btn large" onclick="shareArticle('${safeTitle}')">Compartir Artículo</button>
+            
+            <div id="related-news-container" class="related-news-container">
+                <h3>Otras noticias de ${escapeHtml(article.ciudad || 'la zona')}</h3>
+                <!-- Aquí se cargan las relacionadas -->
+            </div>
+        `;
+
+        // Cargar noticias relacionadas (3 de la misma categoría, excluyendo la actual)
+        const relatedQuery = db.collection('noticias')
+                             .where('categoria', '==', article.categoria.toLowerCase())
+                             .orderBy('fecha', 'desc')
+                             .limit(4);
+        
+        const relatedSnapshot = await relatedQuery.get();
+        const relatedNews = relatedSnapshot.docs
+            .map(doc => ({ id: doc.id, ...doc.data() }))
+            .filter(n => n.id !== article.id)
+            .slice(0, 3);
+            
+        renderNewsList(relatedNews, document.getElementById('related-news-container'));
+
+
+    } catch (error) {
+        console.error("Error al cargar el artículo desde Firestore: ", error);
+        container.innerHTML = '<h2>Error al cargar el artículo.</h2>';
+    }
+}
+
+
+// =================================================================
+// 3. FUNCIÓN DE RENDERIZADO (Adaptada a la estructura de Firestore)
+// =================================================================
+
+/**
+ * Renderiza la lista de noticias en un contenedor.
+ */
+function renderNewsList(newsList, containerElement) {
+    containerElement.innerHTML = '';
+    
+    if (!newsList.length) {
+        containerElement.innerHTML = '<p class="no-news">No se encontraron noticias para esta sección.</p>';
+        return;
+    }
+
+    newsList.forEach(news => {
+        const safeTitle = escapeHtml(news.titulo || 'Noticia');
+        const newsUrl = `noticia.html?id=${news.id}`; 
+        
+        const dateOptions = { year: 'numeric', month: 'numeric', day: 'numeric' };
+        let displayDate = news.fecha ? news.fecha.toDate().toLocaleDateString('es-MX', dateOptions) : 'Fecha Desconocida';
+
+        const articleContent = `
+            <article>
+                <a href="${newsUrl}">
+                    <img src="${news.imagen || 'https://placehold.co/1200x600/CCCCCC/333333?text=Imagen+No+Disponible'}" alt="${safeTitle}">
+                    <div class="card-content">
+                        <h4>${safeTitle}</h4>
+                        <p>${escapeHtml(news.resumen).substring(0, 100)}...</p>
+                        <div class="author-info">
+                            <span>📅 ${displayDate}</span>
+                            <span>| Por: ${escapeHtml(news.autor || 'Redacción')}</span>
+                        </div>
+                    </div>
+                </a>
+                <button class="share-btn" onclick="shareArticle('${safeTitle}')">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                      <path d="M13.5 1a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zM11 2.5a2.5 2.5 0 1 1 .603 1.628l-6.718 3.12a2.499 2.499 0 0 1 0 1.506l6.718 3.12a2.5 2.5 0 1 1-.488.876l-6.718-3.12a2.5 2.5 0 1 1 0-3.256l6.718-3.12A2.5 2.5 0 0 1 11 2.5zm-8.5 4a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3zm12 5.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3z"/>
+                    </svg>
+                    Compartir
+                </button>
+            </article>
+        `;
+
+        const newsCardDiv = document.createElement('div');
+        newsCardDiv.classList.add('news-card'); 
+        newsCardDiv.innerHTML = articleContent;
+        containerElement.appendChild(newsCardDiv);
     });
 }
-// ===================================================
-// FIN DEL REGISTRO DE SW / INICIO DE DECLARACIONES GLOBALES
-// ===================================================
+
+/**
+ * Renderiza los artículos para el carrusel.
+ */
+function renderCarouselItems(newsList, containerElement) {
+     containerElement.innerHTML = '';
+     newsList.forEach(news => {
+        const safeTitle = escapeHtml(news.titulo || 'Noticia');
+        const newsUrl = `noticia.html?id=${news.id}`; 
+        
+        const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+        let displayDate = news.fecha ? news.fecha.toDate().toLocaleDateString('es-MX', dateOptions) : 'Fecha Desconocida';
+
+        const articleContent = `
+            <a href="${newsUrl}" class="carousel-link">
+                <img src="${news.imagen || 'https://placehold.co/800x400/CCCCCC/333333?text=Imagen+No+Disponible'}" alt="${safeTitle}">
+                <div class="carousel-content">
+                    <div class="ribbon">${escapeHtml(news.categoria || 'Noticias').toUpperCase()}</div>
+                    <h3>${safeTitle}</h3>
+                    <p>${escapeHtml(news.resumen).substring(0, 150)}...</p>
+                    <div class="author-info">
+                        <span>📅 ${displayDate}</span>
+                        <span>| Por: ${escapeHtml(news.autor || 'Redacción')}</span>
+                    </div>
+                </div>
+            </a>
+            <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
+        `;
+
+        const carouselItem = document.createElement('div');
+        carouselItem.classList.add('carousel-item');
+        carouselItem.innerHTML = articleContent;
+        containerElement.appendChild(carouselItem);
+    });
+}
 
 
-// Funciones para escapar caracteres especiales de una cadena HTML (Seguridad XSS)
+// =================================================================
+// 4. FUNCIONES DE UTILIDAD Y BÚSQUEDA
+// =================================================================
+
 function escapeHtml(text) {
     if (typeof text !== 'string') return '';
     return text.replace(/[&<>"']/g, function(match) {
@@ -110,8 +318,6 @@ function escapeHtml(text) {
         }
     });
 }
-
-// --- Funciones de Utilidad (Alerta Temporal) ---
 
 function alertMessage(message) {
     console.warn("Mensaje para el usuario:", message);
@@ -128,239 +334,6 @@ function alertMessage(message) {
     }, 3000);
 }
 
-// --- Carga de JSON y Datos ---
-
-async function getNewsData() {
-    // **TU JSON DE NOTICIAS COMPLETO**
-    const newsJsonData = {
-        "noticias_list": [
-            {
-              "id": "2e3c0d60-7a5d-4f1f-a0b2-7c3d4e5f6g7h", 
-              "titulo": "Asesinan a Camilo Ochoa, 'El Alucín', en su domicilio en Temixco",
-              "resumen": "El influencer Camilo Ochoa, conocido como 'El Alucín', fue asesinado a balazos en su domicilio de Temixco, Morelos. La Fiscalía estatal ha abierto una investigación. Ochoa, originario de Mazatlán, Sinaloa, había sido señalado en varios volantes por su presunta conexión con el Cártel de Sinaloa, específicamente con la facción de 'Los Chapitos'. Reportes recientes indican que la muerte del influencer, que era conocido por su contenido en redes sociales y por una entrevista reciente con la periodista Adela Micha, ha generado especulaciones sobre un ajuste de cuentas. La familia de la víctima no ha emitido una declaración oficial sobre lo ocurrido.",
-              "imagen": "https://i.postimg.cc/zfJ0KVJ4/FB-IMG-1755480044118.jpg",
-              "categoria": "policía", 
-              "fecha": "2025-08-17",
-              "ciudad": "Atizapán",
-              "autor": "Javier Huerta Martinez",
-              "destacada": false
-            },
-            {
-              "id": "a9b8c7d6-e5f4-3g2h-1i0j-k9l8m7n6o5p4",
-              "titulo": "Baches afectan casi el 80 % del Valle de México, según denunciantes",
-              "resumen": "Denuncias ciudadanas, apoyadas por imágenes y videos, revelan que los baches se han convertido en un problema crítico y generalizado en el Valle de México, afectando aproximadamente el 80% de las vialidades. Municipios como Ecatepec y Nezahualcóyotl, así como diversas alcaldías de la Ciudad de México, reportan un aumento en la cantidad de hoyos en sus calles. Este deterioro vial no solo causa daños mecánicos a los vehículos, sino que también genera un gran descontento entre los habitantes. A pesar de los programas de bacheo y las aplicaciones de reporte, muchos residentes señalan que las reparaciones son insuficientes y de baja calidad, o que simplemente no se realizan a tiempo, dejando las calles en un estado deplorable.",
-              "imagen": "https://i.postimg.cc/xdr6Ct7j/FB-IMG-1755466516879.jpg",
-              "categoria": "infraestructura",
-              "fecha": "2025-08-17",
-              "ciudad": "Nacional",
-              "autor": "Javier Huerta Martinez",
-              "destacada": false
-            },
-            {
-              "id": "1f2g3h4i-5j6k-7l8m-9n0o-p1q2r3s4t5u6",
-              "titulo": "Familia de AMLO en el foco mediático tras rumores de mudanza presidencial",
-              "resumen": "Versiones sin confirmar, que circulan principalmente en redes sociales, han desatado una ola de especulaciones sobre una supuesta mudanza de la familia del expresidente Andrés Manuel López Obrador. Los rumores han captado la atención mediática y han generado debates sobre la vida privada de la familia presidencial. Algunos informes sugieren que la familia podría estar planificando una mudanza al extranjero, posiblemente a España, lo que ha revivido discusiones sobre la seguridad y los movimientos del exmandatario y sus familiares. Hasta el momento, no se ha emitido ninguna declaración oficial que confirme o desmienta estos rumores.",
-              "imagen": "https://i.postimg.cc/sX5dxMKq/f3eed-16-08-2025-bety-1.jpg",
-              "categoria": "política",
-              "fecha": "2025-08-17",
-              "ciudad": "Nacional",
-              "autor": "Javier Huerta Martinez",
-              "destacada": true 
-            },
-            {
-              "id": "c7d6e5f4-3g2h-1i0j-k9l8-m7n6o5p4q3r2",
-              "titulo": "🚨 México se entere qué: Rescatan a 15 personas atrapadas en Teleférico de Torreón",
-              "resumen": "Momentos de tensión se vivieron en Torreón, Coahuila, cuando una falla mecánica dejó varadas a 15 personas en las góndolas del teleférico de la ciudad. Elementos de Protección Civil y bomberos realizaron un impresionante operativo de rescate que duró varias horas. Todos los tripulantes fueron puestos a salvo sin lesiones graves, aunque algunos presentaron crisis nerviosa. El incidente ha desatado debate en redes sociales sobre la seguridad de este tipo de transportes turísticos en México.",
-              "imagen": "https://i.postimg.cc/d08j8525/telefericotorreonsl-312b03dd-focus-0-0-1200-600.webp",
-              "categoria": "sucesos",
-              "fecha": "2025-08-17",
-              "ciudad": "Nacional",
-              "autor": "",
-              "destacada": false
-            },
-            {
-              "id": "b8c7d6e5-f4g3-h2i1-j0k9-l8m7n6o5p4q3",
-              "titulo": "🔥 México se entere qué: Incendio arrasa mercado en Monterrey",
-              "resumen": "Un fuerte incendio consumió gran parte de un mercado popular en Monterrey durante la madrugada. Testigos relataron que las llamas se propagaron con rapidez debido a materiales inflamables en los locales. Bomberos de varios municipios llegaron para sofocar el siniestro, que dejó pérdidas millonarias y al menos 40 locales afectados. Aunque no se reportaron víctimas mortales, el hecho ha encendido la indignación ciudadana ante la falta de medidas de prevención y control en mercados municipales.",
-              "imagen": "https://i.postimg.cc/J4nx9c8h/incendio-consume-nueve-locales-en-un-mercado-de-monterrey-2496html-incendio-nljpg-8123html-f0dbfbc7.webp",
-              "categoria": "sociedad",
-              "fecha": "2025-08-17",
-              "ciudad": "Nacional",
-              "autor": "",
-              "destacada": false
-            },
-            // --- NOTICIAS LOCALES DE ATIZAPÁN (Anteriores) ---
-            {
-                "id": "new-atizapan-001",
-                "titulo": "Asaltan restaurante de comida rápida en Las Alamedas de Atizapán",
-                "resumen": "Un grupo de tres sujetos armados irrumpió en el establecimiento de hamburguesas a las 9 PM. Se llevaron dinero de la caja y pertenencias de los clientes. La policía municipal inició una persecución.",
-                "imagen": "https://placehold.co/1200x600/FF0000/FFFFFF?text=ATIZAPAN+ALARMA",
-                "categoria": "atizapan", 
-                "fecha": "2025-11-25",
-                "ciudad": "Atizapán",
-                "autor": "Redacción Policía",
-                "destacada": true 
-            },
-            {
-                "id": "as-seg-20251125", 
-                "titulo": "Implementan nuevo rondín de vigilancia en Jardines de Atizapán",
-                "resumen": "Vecinos y autoridades acuerdan establecer patrullajes nocturnos ante el aumento de robos a casa habitación. El operativo durará 90 días.",
-                "imagen": "https://miblog.com/imagenes/patrullaje_jardines.jpg", 
-                "categoria": "atizapan", 
-                "fecha": "2025-11-25",
-                "ciudad": "Atizapán",
-                "autor": "Redacción Atizapán",
-                "destacada": false 
-            },
-            // --- NOTICIAS LOCALES DE ATIZAPÁN (NUEVAS) ---
-            {
-                "id": "ati-seg-1201",
-                "titulo": "Refuerzan vigilancia en la zona escolar de Lomas de Atizapán",
-                "resumen": "La Dirección de Seguridad Pública implementó un operativo de reforzamiento en las inmediaciones de escuelas primarias y secundarias. La medida busca prevenir el robo a estudiantes y padres de familia en horas pico. Se han desplegado 10 elementos adicionales y 4 patrullas en los principales accesos viales.",
-                "imagen": "https://placehold.co/1200x600/0033CC/FFFFFF?text=ATIZAPAN+ESCUELAS",
-                "categoria": "atizapan",
-                "fecha": "2025-11-25",
-                "ciudad": "Atizapán",
-                "autor": "Javier H. Martínez",
-                "destacada": false
-            },
-            {
-                "id": "ati-inf-1202",
-                "titulo": "Vecinos de Las Alamedas exigen mantenimiento urgente al alumbrado público",
-                "resumen": "El 60% de las luminarias en el Fraccionamiento Las Alamedas están reportadas como fuera de servicio, lo que ha elevado la preocupación por la seguridad nocturna. Habitantes exigen una respuesta inmediata del ayuntamiento para rehabilitar el servicio, señalando que la falta de luz es un foco de inseguridad y accidentes.",
-                "imagen": "https://placehold.co/1200x600/808080/FFFFFF?text=LUMINARIAS+ALAMEDAS",
-                "categoria": "atizapan",
-                "fecha": "2025-11-24",
-                "ciudad": "Atizapán",
-                "autor": "Redacción Infraestructura",
-                "destacada": true
-            },
-            {
-                "id": "ati-soc-1203",
-                "titulo": "Exitosa jornada de esterilización canina gratuita en la colonia México 86",
-                "resumen": "El Centro de Control Canino y Bienestar Animal de Atizapán realizó una jornada masiva de esterilización y vacunación en la colonia México 86, atendiendo a más de 150 mascotas. La campaña busca fomentar la tenencia responsable y controlar la población de animales en situación de calle. Vecinos agradecen la iniciativa y piden que se extienda a otras zonas del municipio.",
-                "imagen": "https://placehold.co/1200x600/00CC00/FFFFFF?text=ESTERILIZACIÓN+ATIZAPÁN",
-                "categoria": "atizapan",
-                "fecha": "2025-11-23",
-                "ciudad": "Atizapán",
-                "autor": "Colaborador Social",
-                "destacada": false
-            }
-        ]
-    };
-    
-    return newsJsonData.noticias_list || [];
-}
-
-// --- Renderizado de Listas y Carrusel ---
-
-function renderNews(newsList, containerId) {
-    const newsContainer = document.getElementById(containerId);
-    if (!newsContainer) return;
-
-    if (!newsList.length) {
-        newsContainer.innerHTML = '<p class="no-news">No se encontraron noticias para esta sección.</p>';
-        return;
-    }
-
-    newsContainer.innerHTML = '';
-    newsList.forEach(news => {
-        const safeTitle = escapeHtml(news.titulo || 'Noticia');
-        const isCarousel = containerId === 'carousel-inner';
-        
-        // URL de la Noticia Individual: crucial para cargar el artículo
-        const newsUrl = `noticia.html?id=${news.id}`; 
-        
-        const articleContent = isCarousel ? `
-            <a href="${newsUrl}" class="carousel-link">
-                <img src="${news.imagen || 'https://via.placeholder.co/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
-                <div class="carousel-content">
-                    <h3>${safeTitle}</h3>
-                    <p>${escapeHtml(news.resumen).substring(0, 150)}...</p>
-                    <div class="author-info">
-                        <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
-                    </div>
-                </div>
-            </a>
-            <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
-        ` : `
-            <article>
-                <a href="${newsUrl}">
-                    <img src="${news.imagen || 'https://via.placeholder.co/800x400?text=Imagen+No+Disponible'}" alt="${safeTitle}">
-                    <h4>${safeTitle}</h4>
-                    <p>${escapeHtml(news.resumen).substring(0, 100)}...</p>
-                </a>
-                <div class="author-info">
-                    <span>Por: ${escapeHtml(news.autor || 'Redacción')}</span>
-                </div>
-                <button class="share-btn" onclick="shareArticle('${safeTitle}')">Compartir</button>
-            </article>
-        `;
-
-        const tag = isCarousel ? 'div' : 'span';
-        const classNames = isCarousel ? 'carousel-item' : 'news-card'; 
-
-        if (isCarousel) {
-             newsContainer.innerHTML += `<${tag} class="${classNames}">${articleContent}</${tag}>`;
-        } else {
-             newsContainer.innerHTML += `<div class="${classNames}">${articleContent}</div>`;
-        }
-    });
-}
-
-
-// Función para filtrar noticias por categoría (p. ej., atizapan)
-async function loadFilteredNews(category, containerId) {
-    const noticias = await getNewsData();
-    let filteredNews = noticias;
-
-    if (category) {
-        filteredNews = noticias.filter(n => n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
-    }
-    
-    // Muestra solo las 6 primeras noticias
-    renderNews(filteredNews.slice(0, 6), containerId);
-}
-
-// Función para cargar el carrusel filtrado por categoría
-async function loadFilteredCarousel(category) {
-    const noticias = await getNewsData();
-    
-    let destacadas = noticias;
-    
-    if (category) {
-        // Primero intenta filtrar por destacada Y categoría
-        destacadas = noticias.filter(n => n.destacada && n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
-        
-        // Si no hay destacadas específicas, usa cualquier noticia de esa categoría
-        if (destacadas.length === 0) {
-            destacadas = noticias.filter(n => n.categoria && n.categoria.toLowerCase() === category.toLowerCase());
-        }
-    } else {
-        // index.html: usar todas las destacadas
-        destacadas = noticias.filter(n => n.destacada);
-    }
-    
-    // Si no encuentra destacadas, usa las 3 primeras noticias generales para evitar un carrusel vacío
-    const lista = destacadas.length ? destacadas.slice(0, 3) : noticias.slice(0, 3);
-    
-    renderNews(lista, 'carousel-inner');
-
-    const items = document.querySelectorAll('.carousel-item');
-    if (items.length > 0) {
-        items[0].classList.add('active');
-    }
-
-    if (lista.length > 1) {
-        clearInterval(autoSlide);
-        autoSlide = setInterval(() => moveCarousel(1), 5000);
-    }
-}
-
-
-// --- Lógica de Artículo Individual (noticia.html) ---
-
-// Función para obtener un parámetro de la URL (ej. el ID)
 function getUrlParameter(name) {
     name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
     const regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
@@ -368,54 +341,6 @@ function getUrlParameter(name) {
     return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
 }
 
-async function loadSingleArticle(id) {
-    const noticias = await getNewsData();
-    const article = noticias.find(n => n.id === id);
-    const container = document.getElementById('news-article-container');
-    const titleElement = document.querySelector('title');
-
-    if (!container) return;
-
-    if (!article) {
-        container.innerHTML = '<h2>🚨 Error 404: Noticia No Encontrada</h2><p>Lo sentimos, el artículo solicitado no existe o fue eliminado.</p>';
-        titleElement.textContent = 'Error 404 | México Se Enteré Qué';
-        return;
-    }
-
-    // Formateo de Fecha
-    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-    let displayDate = article.fecha ? new Date(article.fecha).toLocaleDateString('es-MX', dateOptions) : 'Fecha Desconocida';
-    
-    const safeTitle = escapeHtml(article.titulo);
-    titleElement.textContent = safeTitle + ' | México Se Enteré Qué'; 
-
-    container.innerHTML = `
-        <h1>${safeTitle}</h1>
-        <div class="article-meta">
-            <span>📅 Publicado: ${displayDate}</span>
-            <span>📍 Ciudad: ${escapeHtml(article.ciudad || 'No especificado')}</span>
-            <span>✍️ Por: ${escapeHtml(article.autor || 'Redacción')}</span>
-        </div>
-        
-        <img src="${article.imagen || 'https://via.placeholder.co/1200x600?text=Imagen+Principal'}" alt="${safeTitle}" class="article-image">
-        
-        <section class="article-body">
-            <p>${escapeHtml(article.resumen)}</p>
-        </section>
-
-        <button class="share-btn large" onclick="shareArticle('${safeTitle}')">Compartir Artículo</button>
-    `;
-    
-    // Cargar noticias relacionadas (3 de la misma categoría, excluyendo la actual)
-    const relatedNews = noticias
-        .filter(n => n.categoria === article.categoria && n.id !== article.id)
-        .slice(0, 3);
-        
-    renderNews(relatedNews, 'related-news-container');
-}
-
-
-// --- Carrusel Control ---
 function moveCarousel(direction) {
     const items = document.querySelectorAll('.carousel-item');
     if (items.length <= 1) return;
@@ -426,30 +351,31 @@ function moveCarousel(direction) {
     
     const carouselInner = document.getElementById('carousel-inner');
     if (carouselInner) {
-        carouselInner.style.transform = `translateX(-${currentIndex * 100}%)`;
+        // Ajusta el carrusel al nuevo índice
+        carouselInner.style.transform = `translateX(-${currentIndex * (100 / items.length)}%)`; // Se necesitaría CSS más complejo para esto
     }
     
     if (items[currentIndex]) { items[currentIndex].classList.add('active'); }
 }
 window.moveCarousel = moveCarousel;
 
-// --- Búsqueda ---
-async function searchNews() {
+
+function searchNews() {
     const searchInput = document.getElementById('search');
-    if (!searchInput) return;
+    const newsContainer = document.getElementById('news-container');
+    if (!searchInput || !newsContainer) return;
     
     const query = (searchInput.value || '').toLowerCase();
-    const noticias = await getNewsData();
     
-    const filteredNews = noticias
-        .filter(n => (n.titulo || '').toLowerCase().includes(query) || (n.resumen || '').toLowerCase().includes(query));
+    // Filtra contra los datos cargados previamente desde Firestore
+    const filteredNews = newsData
+        .filter(n => (n.titulo || '').toLowerCase().includes(query) || (n.resumen || '').toLowerCase().includes(query) || (n.categoria || '').toLowerCase().includes(query));
     
-    renderNews(filteredNews.slice(0, 6), 'news-container');
+    renderNewsList(filteredNews, newsContainer);
     alertMessage(`Resultados de búsqueda cargados para: ${escapeHtml(query)}`);
 }
 window.searchNews = searchNews;
 
-// --- Compartir ---
 function shareArticle(title) {
     const url = window.location.href;
     const text = `¡Mira esta noticia en México Se Enteré Qué!: ${title}`;
@@ -458,16 +384,26 @@ function shareArticle(title) {
         navigator.share({ title, text, url }).catch(() => {});
     } else {
         // Fallback: Copiar enlace
-        navigator.clipboard.writeText(url).then(() => {
+        // Usamos document.execCommand('copy') como fallback más seguro en algunos entornos iFrame
+        try {
+            const tempInput = document.createElement('textarea');
+            tempInput.value = url;
+            document.body.appendChild(tempInput);
+            tempInput.select();
+            document.execCommand('copy');
+            document.body.removeChild(tempInput);
             alertMessage(`Enlace copiado al portapapeles: ${url}`);
-        }).catch(() => {
+        } catch (err) {
             alertMessage(`Copia este enlace para compartir: ${url}`);
-        });
+        }
     }
 }
 window.shareArticle = shareArticle;
 
-// --- Menú / Búsqueda (UI) ---
+// =================================================================
+// 5. LÓGICA DE UI Y PWA
+// =================================================================
+
 function toggleMenu() {
     const navMenu = document.getElementById('nav-menu');
     const menuToggle = document.querySelector('.menu-toggle');
@@ -500,15 +436,12 @@ function toggleSearch() {
 }
 window.toggleSearch = toggleSearch;
 
-// --- Cookies y App Modal (PWA) ---
-
 function openCookieBanner() {
     const banner = document.getElementById('cookie-banner');
     if (banner && localStorage.getItem('cookies-consent') === null) {
         banner.style.display = 'block';
     }
 }
-window.openCookieBanner = openCookieBanner;
 
 function hideCookieBanner() {
     const banner = document.getElementById('cookie-banner');
@@ -528,7 +461,13 @@ function checkAppModalVisibility() {
     if (isPWAInstalled() || localStorage.getItem('hide-app-modal') === 'true') {
         appModal.style.display = 'none';
     } else {
-        appModal.style.display = 'flex';
+        // Solo mostrar si hay una opción de instalación
+        if (deferredPrompt) {
+            appModal.style.display = 'flex';
+        } else {
+            // Si el navegador no soporta beforeinstallprompt, lo ocultamos
+            appModal.style.display = 'none';
+        }
     }
 }
 
@@ -541,11 +480,11 @@ function hideAppModal() {
 }
 window.hideAppModal = hideAppModal;
 
-// --- LÓGICA DE INSTALACIÓN PWA (Smart Banner) ---
-
+// LÓGICA DE INSTALACIÓN PWA (Smart Banner)
 window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault();
     deferredPrompt = e;
+    checkAppModalVisibility(); // Revisa si debe mostrarse el banner ahora que tenemos el prompt
 });
 
 function installPWA(e) {
@@ -567,101 +506,124 @@ function installPWA(e) {
     }
 }
 window.installPWA = installPWA;
-// =================================================================
-// 1. CONFIGURACIÓN DE FIREBASE E INICIALIZACIÓN
-// =================================================================
 
-// Credenciales copiadas de la Consola de Firebase
-const firebaseConfig = {
-    apiKey: "AIzaSyBPbCmeaCd6sYJoO_9JqEWzWievDw_fFwc", // <--- Tu API Key
-    authDomain: "noticiaspwa-58270.firebaseapp.com",
-    projectId: "noticiaspwa-58270",
-    storageBucket: "noticiaspwa-58270.firebasestorage.app",
-    messagingSenderId: "758477934480",
-    appId: "1:758477934480:web:10f781e64eff91b21a2d15",
-};
-
-// Inicializa Firebase y crea la instancia de Firestore
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
 // =================================================================
-// 2. FUNCIÓN PARA CARGAR Y MOSTRAR NOTICIAS DESDE FIRESTORE
-// =================================================================
-async function loadFilteredNewsFromFirestore(filter = 'todos') {
-    const newsContainer = document.getElementById('news-container');
-    newsContainer.innerHTML = '<h2>Cargando noticias...</h2>'; 
-
-    try {
-        let query = db.collection('noticias')
-                      .orderBy('fecha', 'desc'); // Ordena por fecha descendente
-
-        // Aplica el filtro de categoría si no es 'todos'
-        if (filter !== 'todos') {
-            query = query.where('categoria', '==', filter);
-        }
-
-        const snapshot = await query.get();
-        // Mapea los documentos para extraer solo los datos
-        const news = snapshot.docs.map(doc => doc.data());
-
-        // Limpia y renderiza
-        newsContainer.innerHTML = ''; 
-        
-        if (news.length === 0) {
-            newsContainer.innerHTML = '<h2>No hay noticias disponibles en esta categoría.</h2>';
-            return;
-        }
-
-        // Itera sobre las noticias y las renderiza en el HTML
-        news.forEach(article => {
-            const articleElement = document.createElement('article');
-            
-            // CONVERSIÓN DE FECHA: La fecha en Firestore es un objeto Timestamp
-            const readableDate = article.fecha ? article.fecha.toDate().toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Fecha no disponible';
-
-            articleElement.innerHTML = `
-                <h3>${article.titulo}</h3>
-                <p class="resumen">${article.resumen}</p>
-                <div class="meta-data">
-                    <span class="categoria">${article.categoria.toUpperCase()}</span>
-                    <span class="fecha">${readableDate}</span>
-                </div>
-            `;
-            articleElement.classList.add('news-article'); 
-            newsContainer.appendChild(articleElement);
-        });
-
-    } catch (error) {
-        console.error("Error al cargar las noticias desde Firestore: ", error);
-        newsContainer.innerHTML = '<h2>Error al conectar con la base de datos. Asegúrate de que los datos estén en Firestore.</h2>';
-    }
-}
-
-// =================================================================
-// 3. FUNCIÓN DE FILTRADO (Asume que los botones tienen la clase 'filter-btn')
+// 6. INICIALIZACIÓN PRINCIPAL (DOM Content Loaded)
 // =================================================================
 
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Llamada inicial para cargar todas las noticias al iniciar
-    loadFilteredNewsFromFirestore('todos'); 
+    
+    // --- Registro del Service Worker ---
+    if ('serviceWorker' in navigator) {
+        // Importante: Usar DOMContentLoaded en lugar de 'load' para evitar InvalidStateError
+        navigator.serviceWorker.register('/mexico-se-entere/service-worker.js')
+            .then(reg => {
+                console.log('Service Worker registrado con éxito:', reg.scope);
+            })
+            .catch(error => {
+                // Si falla, el error podría ser por la ruta. 
+                console.error('Fallo en el registro del Service Worker:', error);
+            });
+    }
+    
+    // --- Lógica de Detección de Página y Carga de Contenido ---
+    
+    const path = window.location.pathname;
+    
+    if (path.includes('noticia.html')) {
+        // LÓGICA PARA PÁGINA DE NOTICIA INDIVIDUAL
+        const articleId = getUrlParameter('id');
+        if (articleId) {
+            loadSingleArticleFromFirestore(articleId); // <-- Carga de Firebase
+        } else {
+            document.getElementById('news-article-container').innerHTML = '<h2>ID de noticia no proporcionado.</h2>';
+        }
+    } else {
+        // LÓGICA PARA PÁGINAS DE LISTADO (Index, Atizapán, etc.)
+        let categoryToFilter = 'todos'; // Valor por defecto
+        
+        if (path.includes('atizapan.html')) {
+            categoryToFilter = 'atizapan';
+        } else if (path.includes('tlalnepantla.html')) {
+            categoryToFilter = 'tlalnepantla';
+        } else if (path.includes('cuatitlan-izcalli.html')) {
+            categoryToFilter = 'izcalli'; 
+        } else if (path.includes('nicolas-romero.html')) {
+            categoryToFilter = 'nicolas-romero'; 
+        } else if (path.includes('naucalpan.html')) {
+            categoryToFilter = 'naucalpan';
+        }
 
-    // 2. Configura los listeners para los botones de filtro
+        // Carga la lista principal y el carrusel
+        loadFilteredNewsFromFirestore(categoryToFilter, 'news-container'); // <-- Carga de Firebase
+        loadCarouselFromFirestore(categoryToFilter); // <-- Carga de Firebase
+    }
+
+    // --- Lógica de Filtros (Botones) ---
     const filterButtons = document.querySelectorAll('.filter-btn');
 
     filterButtons.forEach(button => {
+        // Importante: El filtro debe cargar las noticias en la lista principal, no en el carrusel
         button.addEventListener('click', (event) => {
-            // Remueve la clase 'active' de todos los botones
             filterButtons.forEach(btn => btn.classList.remove('active'));
-
-            // Añade la clase 'active' al botón clickeado
             event.target.classList.add('active');
-
-            // Obtiene la categoría del atributo data-category
             const category = event.target.getAttribute('data-category');
             
-            // Carga las noticias con el nuevo filtro
-            loadFilteredNewsFromFirestore(category); 
+            loadFilteredNewsFromFirestore(category, 'news-container'); // <-- Recarga solo la lista principal
         });
     });
+    
+    // --- Lógica de UI (Cookies, Búsqueda, PWA Modal) ---
+    checkAppModalVisibility();
+
+    const consent = localStorage.getItem('cookies-consent');
+    const acceptBtn = document.getElementById('accept-cookies');
+    const rejectBtn = document.getElementById('reject-cookies');
+    const installBtn = document.getElementById('install-pwa-btn'); // Botón de instalación PWA
+
+    if (!consent) {
+        setTimeout(openCookieBanner, 1000); 
+    }
+    
+    // Manejadores de eventos de cookies
+    if (acceptBtn) {
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookies-consent', 'accepted');
+            hideCookieBanner();
+            alertMessage('Cookies aceptadas. ¡Gracias!');
+        });
+    }
+
+    if (rejectBtn) {
+        rejectBtn.addEventListener('click', () => {
+            localStorage.setItem('cookies-consent', 'rejected');
+            hideCookieBanner();
+            alertMessage('Cookies rechazadas.');
+        });
+    }
+    
+    // Manejador de evento de instalación PWA
+    if (installBtn) {
+        installBtn.addEventListener('click', installPWA);
+    }
+    
+    // Manejadores de eventos de búsqueda
+    const searchButton = document.getElementById('search-button'); 
+    const searchInput = document.getElementById('search'); 
+    
+    if (searchButton) {
+        searchButton.addEventListener('click', searchNews);
+    }
+    
+    // Permite buscar al presionar Enter en el input
+    if (searchInput) {
+        searchInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Evita que se envíe el formulario si está dentro de uno
+                searchNews();
+            }
+        });
+    }
+
 });
