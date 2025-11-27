@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mexico se entere que</title>
+    <title>México se Entere: Noticias Locales</title>
+    <!-- Configuración para PWA: Indica el manifiesto -->
+    <link rel="manifest" href="manifest.json">
+    
     <!-- Carga de Tailwind CSS para la estética -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -34,8 +37,15 @@
 </head>
 <body class="bg-gray-100 min-h-screen">
     <header class="bg-emerald-600 text-white p-4 shadow-xl">
-        <div class="max-w-4xl mx-auto">
-            <h1 class="text-2xl font-bold">Mi Aplicación de Noticias (Modo Sin Conexión)</h1>
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">México se Entere</h1>
+                <p class="text-sm opacity-90">Atizapán, Tlane, Naucalpan e Izcalli</p>
+            </div>
+            <!-- Botón de Instalación PWA (será visible si el Service Worker falla o si el navegador lo requiere) -->
+            <button id="installAppButton" style="display:none;" class="bg-white text-emerald-600 py-1 px-3 rounded-full font-semibold shadow hover:bg-emerald-50 transition duration-200">
+                Instalar App
+            </button>
         </div>
     </header>
 
@@ -45,10 +55,10 @@
         <!-- 1. CONTENEDOR DE LA LISTA (PÁGINA PRINCIPAL)   -->
         <!-- ============================================== -->
         <div id="newsListContainer">
-            <h2 class="text-3xl font-extrabold text-gray-800 mb-6">Últimas Noticias</h2>
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b-2 pb-2 border-emerald-500">Últimas Noticias Locales</h2>
             
             <!-- Aquí se inyectan las tarjetas -->
-            <div id="newsList" class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div id="newsList" class="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <p class="col-span-full text-center text-gray-500 py-10">Cargando contenido...</p>
             </div>
         </div>
@@ -69,32 +79,40 @@
         
         // ===================================================================
         // *** BASE DE DATOS LOCAL ***
-        // Aquí se almacenan las noticias. Puedes agregar o modificar más items.
+        // Noticias específicas de Atizapán, Tlane, Naucalpan e Izcalli
         // ===================================================================
         const LOCAL_NEWS_DATA = [
             {
-                id: "noticia-001",
-                titulo: "El Futuro de la IA en la Educación Superior",
-                resumen: "Expertos debaten el impacto de la Inteligencia Artificial en los métodos de enseñanza y evaluación universitarios, enfocándose en la personalización del aprendizaje.",
-                imagenUrl: "https://placehold.co/600x400/10b981/ffffff?text=INTELIGENCIA+ARTIFICIAL",
-                contenidoCompleto: "El reciente auge de modelos de lenguaje avanzados ha obligado a las instituciones educativas a reevaluar por completo sus estrategias. La IA promete ser una herramienta poderosa para aliviar la carga de trabajo de los profesores y ofrecer tutorías personalizadas a los estudiantes.",
-                fecha: new Date().getTime() - 86400000 // Ayer
+                id: "noticia-atizapan-001",
+                titulo: "Nuevo Centro de Emprendimiento en Lomas de Atizapán",
+                resumen: "Se inaugura un espacio diseñado para apoyar a las pequeñas y medianas empresas de la zona, ofreciendo talleres y asesorías gratuitas.",
+                imagenUrl: "https://placehold.co/600x400/10b981/ffffff?text=ATIZAPAN+CENTRO",
+                contenidoCompleto: "El proyecto, impulsado por la cámara de comercio local, busca fomentar la innovación y el empleo juvenil. Las inscripciones para los primeros talleres de marketing digital ya están abiertas y han superado las expectativas de afluencia.",
+                fecha: new Date().getTime() - 86400000 
             },
             {
-                id: "noticia-002",
-                titulo: "Mercado de Criptomonedas Estabiliza su Crecimiento",
-                resumen: "Tras un período de alta volatilidad, el mercado digital muestra señales de maduración con una adopción institucional creciente, impulsando la confianza del inversor.",
-                imagenUrl: "https://placehold.co/600x400/3b82f6/ffffff?text=CRIPTOMONEDAS",
-                contenidoCompleto: "Los analistas señalan que la entrada de grandes bancos de inversión y fondos de pensiones al espacio criptográfico es un indicador de que las criptomonedas se están consolidando como una clase de activo legítima. Se espera un marco regulatorio más claro en los próximos meses, lo que podría atraer más capital.",
-                fecha: new Date().getTime() - 172800000 // Anteayer
+                id: "noticia-tlanepantla-002",
+                titulo: "Mejoras Viales: Concluyen Obras en Periférico Norte (Tlane)",
+                resumen: "Después de meses de trabajo, la Secretaría de Obras Públicas anuncia la finalización de los trabajos de reencarpetamiento en el tramo de Tlalnepantla, mejorando el flujo vehicular.",
+                imagenUrl: "https://placehold.co/600x400/3b82f6/ffffff?text=TLALNEPANTLA+VIALIDAD",
+                contenidoCompleto: "Los conductores de la zona notarán una reducción significativa en los tiempos de traslado, especialmente en las horas pico. El proyecto incluyó la renovación de señalética y la instalación de nuevas luminarias LED para mayor seguridad nocturna.",
+                fecha: new Date().getTime() - 172800000 
             },
             {
-                id: "noticia-003",
-                titulo: "La Nueva Tendencia en Dieta: Foco en la Microbiota",
-                resumen: "Más allá de las calorías, la investigación actual subraya la importancia de alimentar a las bacterias intestinales para mejorar la salud mental y el sistema inmunológico.",
-                imagenUrl: "https://placehold.co/600x400/ef4444/ffffff?text=SALUD+Y+DIETA",
-                contenidoCompleto: "El concepto de que el intestino es el 'segundo cerebro' ha pasado de ser una teoría a una verdad científica ampliamente aceptada. Consumir alimentos ricos en fibra prebiótica y probióticos naturales es clave para mantener un ecosistema intestinal equilibrado.",
-                fecha: new Date().getTime() // Hoy
+                id: "noticia-naucalpan-003",
+                titulo: "Alerta de Seguridad: Reportan Robos en Zona de Satélite (Naucalpan)",
+                resumen: "Vecinos de Ciudad Satélite y alrededores piden mayor vigilancia tras un incremento en los reportes de robos a casa habitación durante las últimas semanas.",
+                imagenUrl: "https://placehold.co/600x400/ef4444/ffffff?text=NAUCALPAN+SEGURIDAD",
+                contenidoCompleto: "Las autoridades locales han respondido con el aumento de patrullajes y la activación de grupos de vigilancia vecinal. Se recomienda a los ciudadanos tomar precauciones extremas al salir de sus domicilios y reportar cualquier actividad sospechosa inmediatamente al 911.",
+                fecha: new Date().getTime() - 43200000 
+            },
+             {
+                id: "noticia-izcalli-004",
+                titulo: "Feria del Libro y Cultura en Cuautitlán Izcalli",
+                resumen: "El centro cultural abre sus puertas a una nueva edición de la feria del libro, con la presencia de autores locales e internacionales y actividades para toda la familia.",
+                imagenUrl: "https://placehold.co/600x400/f59e0b/ffffff?text=IZCALLI+CULTURA",
+                contenidoCompleto: "El evento se extenderá por una semana completa e incluirá lecturas de poesía, talleres de escritura creativa y presentaciones de danza folclórica. Es una oportunidad única para fomentar la lectura en la comunidad y apoyar a los libreros independientes.",
+                fecha: new Date().getTime() 
             }
         ];
         
@@ -102,6 +120,8 @@
         const newsListContainer = document.getElementById('newsListContainer');
         const newsDetailContainer = document.getElementById('newsDetailContainer');
         const newsListDiv = document.getElementById('newsList');
+        const installAppButton = document.getElementById('installAppButton');
+        let deferredPrompt; // Variable para guardar el evento de instalación de PWA
         
         
         // ------------------------------------------------------------------
@@ -125,6 +145,16 @@
             
             // Buscar la noticia por ID en la base de datos local
             const data = LOCAL_NEWS_DATA.find(news => news.id === newsId);
+            
+            // Función para obtener la etiqueta de municipio
+            const getMunicipioTag = (id) => {
+                if (id.includes('atizapan')) return 'Atizapán';
+                if (id.includes('tlanepantla')) return 'Tlalnepantla';
+                if (id.includes('naucalpan')) return 'Naucalpan';
+                if (id.includes('izcalli')) return 'Izcalli';
+                return 'Edomex';
+            };
+            const municipioTag = getMunicipioTag(newsId);
 
             if (data) {
                 // Renderizar la noticia COMPLETA
@@ -135,20 +165,22 @@
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                 <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                             </svg>
-                            Volver a la lista de noticias
+                            Volver a la lista
                         </button>
                         
+                        <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-4">${municipioTag}</span>
+
                         <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">${data.titulo}</h1>
                         
-                        <!-- La imagen ahora es local y funciona sin Firebase -->
+                        <!-- Imagen de la Noticia -->
                         <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-auto max-h-96 object-cover rounded-xl mb-8 shadow-lg border border-gray-200">
                         
                         <!-- Resumen/Bajada -->
                         <p class="text-xl font-semibold text-gray-600 mb-8 border-l-4 border-emerald-500 pl-4 italic">${data.resumen}</p>
                         
-                        <!-- ESPACIO DEL ANUNCIO -->
+                        <!-- ESPACIO DEL ANUNCIO (Monetización) -->
                         <div class="ad-placeholder">
-                            ESPACIO PUBLICITARIO (Aquí irá el código de AdSense)
+                            ¡PUBLICIDAD AQUÍ! (Google AdSense o Patrocinador Local)
                         </div>
 
                         <!-- EL CONTENIDO COMPLETO APARECE AQUÍ -->
@@ -157,7 +189,7 @@
                         </div>
 
                         <hr class="my-8 border-gray-200">
-                        <p class="text-sm text-gray-500 text-right">Publicado: ${new Date(data.fecha).toLocaleDateString()}</p>
+                        <p class="text-sm text-gray-500 text-right">Publicado: ${new Date(data.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                 `;
                 
@@ -172,14 +204,25 @@
         // ------------------------------------------------------------------
         function fetchNews() {
             if (LOCAL_NEWS_DATA.length === 0) {
-                newsListDiv.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">No hay noticias cargadas.</p>';
+                newsListDiv.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">No hay noticias cargadas. ¡Añade tu primera nota!</p>';
                 return;
             }
             
             newsListDiv.innerHTML = ''; 
             
-            LOCAL_NEWS_DATA.forEach(data => {
+            LOCAL_NEWS_DATA.sort((a, b) => b.fecha - a.fecha).forEach(data => {
                 
+                // Función para obtener la etiqueta de municipio
+                const getMunicipioTag = (id) => {
+                    if (id.includes('atizapan')) return 'Atizapán';
+                    if (id.includes('tlanepantla')) return 'Tlalnepantla';
+                    if (id.includes('naucalpan')) return 'Naucalpan';
+                    if (id.includes('izcalli')) return 'Izcalli';
+                    return 'Edomex';
+                };
+
+                const municipioTag = getMunicipioTag(data.id);
+
                 // Creamos la tarjeta (elemento DIV)
                 const newsItem = document.createElement('div');
                 newsItem.className = 'bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition cursor-pointer transform hover:scale-[1.01]';
@@ -192,6 +235,7 @@
                 // Contenido visual de la tarjeta
                 newsItem.innerHTML = `
                     <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-40 object-cover rounded-lg mb-4 shadow-sm">
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-2">${municipioTag}</span>
                     <h3 class="font-bold text-xl text-gray-900 mb-2">${data.titulo}</h3>
                     <p class="text-gray-600 text-sm line-clamp-2">${data.resumen}</p>
                     <p class="mt-3 text-emerald-600 text-sm font-medium">Leer Noticia Completa</p>
@@ -200,6 +244,42 @@
                 newsListDiv.appendChild(newsItem);
             });
         }
+
+        // ------------------------------------------------------------------
+        // D. LÓGICA DEL SERVICE WORKER (PWA)
+        // ------------------------------------------------------------------
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con éxito en:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Fallo el registro del ServiceWorker:', error);
+                    });
+            });
+        }
+
+        // Lógica para el botón de instalación (Solo visible en navegadores compatibles)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installAppButton.style.display = 'block';
+
+            installAppButton.addEventListener('click', () => {
+                installAppButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó la instalación de la PWA');
+                    } else {
+                        console.log('Usuario rechazó la instalación de la PWA');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+
 
         // Iniciar la aplicación al cargar la ventana
         window.onload = fetchNews;
