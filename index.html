@@ -214,4 +214,141 @@
             const municipioTag = getMunicipioTag(data.categoria);
 
             // Obtener el anuncio rotativo
-            const adContent = getRandomSponsoredLink
+            const adContent = getRandomSponsoredLink();
+
+            if (data) {
+                // Renderizar la noticia COMPLETA
+                newsDetailContainer.innerHTML = `
+                    <div class="p-4 sm:p-8 bg-white rounded-xl shadow-2xl">
+                        <!-- Botón Volver -->
+                        <button onclick="showNewsList()" class="mb-6 text-emerald-600 hover:text-emerald-800 font-semibold flex items-center transition duration-200 text-lg">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
+                            </svg>
+                            Volver a la lista
+                        </button>
+                        
+                        <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-4">${municipioTag}</span>
+
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">${data.titulo}</h1>
+                        
+                        <!-- Imagen de la Noticia -->
+                        <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-auto max-h-96 object-cover rounded-xl mb-8 shadow-lg border border-gray-200">
+                        
+                        <!-- Resumen/Bajada -->
+                        <p class="text-xl font-semibold text-gray-600 mb-8 border-l-4 border-emerald-500 pl-4 italic">${data.resumen}</p>
+                        
+                        <!-- ESPACIO DEL ANUNCIO (Ahora con tus sitios) -->
+                        <div class="ad-placeholder">
+                            ${adContent}
+                        </div>
+
+                        <!-- EL CONTENIDO COMPLETO APARECE AQUÍ -->
+                        <div class="text-gray-800 leading-relaxed text-lg space-y-4">
+                            ${data.resumen.split('\n').map(p => `<p>${p}</p>`).join('')}
+                        </div>
+
+                        <hr class="my-8 border-gray-200">
+                        <p class="text-sm text-gray-500 text-right">Publicado: ${new Date(data.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    </div>
+                `;
+                
+            } else {
+                newsDetailContainer.innerHTML = `<p class="text-center text-red-500 mt-12">Error: Noticia no encontrada.</p>`;
+            }
+        }
+        window.showNewsDetailPage = showNewsDetailPage;
+
+        // ------------------------------------------------------------------
+        // C. FUNCIÓN DE CARGA DE NOTICIAS (DEL JSON LOCAL)
+        // ------------------------------------------------------------------
+        function fetchNews() {
+            if (LOCAL_NEWS_DATA.length === 0) {
+                newsListDiv.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">No hay noticias cargadas. ¡Añade tu primera nota!</p>';
+                return;
+            }
+            
+            newsListDiv.innerHTML = ''; 
+            
+            LOCAL_NEWS_DATA.sort((a, b) => b.fecha - a.fecha).forEach(data => {
+                
+                // Función para obtener la etiqueta de municipio
+                const getMunicipioTag = (category) => {
+                    const map = {
+                        'atizapan': 'Atizapán',
+                        'tlalnepantla': 'Tlalnepantla',
+                        'naucalpan': 'Naucalpan',
+                        'cuatitlan izcallí': 'Izcalli',
+                        'nicolas romero': 'Nicolás Romero',
+                        'méxico': 'Nacional'
+                    };
+                    return map[category.toLowerCase()] || 'Edomex';
+                };
+
+                const municipioTag = getMunicipioTag(data.categoria);
+
+                // Creamos la tarjeta (elemento DIV)
+                const newsItem = document.createElement('div');
+                newsItem.className = 'bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition cursor-pointer transform hover:scale-[1.01]';
+                
+                // AÑADIMOS EL EVENTO ONCLICK
+                newsItem.onclick = () => {
+                    showNewsDetailPage(data.id); 
+                };
+
+                // Contenido visual de la tarjeta
+                newsItem.innerHTML = `
+                    <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-40 object-cover rounded-lg mb-4 shadow-sm">
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-2">${municipioTag}</span>
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">${data.titulo}</h3>
+                    <p class="text-gray-600 text-sm line-clamp-2">${data.resumen}</p>
+                    <p class="mt-3 text-emerald-600 text-sm font-medium">Leer Noticia Completa</p>
+                `;
+                
+                newsListDiv.appendChild(newsItem);
+            });
+        }
+
+        // ------------------------------------------------------------------
+        // D. LÓGICA DEL SERVICE WORKER (PWA)
+        // ------------------------------------------------------------------
+        // Registra el Service Worker (necesario para la PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Asegúrate de usar la ruta correcta del Service Worker
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con éxito en:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Fallo el registro del ServiceWorker:', error);
+                    });
+            });
+        }
+
+        // Lógica para el botón de instalación (Solo visible en navegadores compatibles)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installAppButton.style.display = 'block';
+
+            installAppButton.addEventListener('click', () => {
+                installAppButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó la instalación de la PWA');
+                    } else {
+                        console.log('Usuario rechazó la instalación de la PWA');
+                    }
+                    deferredPrompt = null;
+                });
+            });
+        });
+
+
+        // Iniciar la aplicación al cargar la ventana
+        window.onload = fetchNews;
+    </script>
+</body>
+</html>
