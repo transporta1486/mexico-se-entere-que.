@@ -1,63 +1,61 @@
-// Nombre de la caché (incrementa la versión si cambias los archivos)
-const CACHE_NAME = 'noticias-pwa-v1.0.1';
+// Nombre de la caché para esta versión
+const CACHE_NAME = 'mx-se-entere-v1';
 
-// Lista de archivos que se deben precargar y guardar en caché
+// Lista de archivos que queremos precargar
 const urlsToCache = [
-  '/', // Esto cachea el index.html
-  'index.html',
-  'style.css', // Asume que tienes este nombre para el CSS principal
-  'script.js',
-  // Archivos de manifiesto e iconos (asegúrate de que existan)
-  'manifest.json',
-  '/images/icons/icon-512x512.png', // Reemplaza con tus rutas reales de iconos
-  // Agrega otros recursos críticos como imágenes, fuentes o otros JS si los tienes.
+  '/', // El index.html si acceden a la raíz
+  '/index.html',
+  '/manifest.json',
+  // Las URLs de las imágenes placeholder también se guardarán en caché automáticamente
+  'https://cdn.tailwindcss.com' 
 ];
 
-// 1. EVENTO DE INSTALACIÓN: Al instalar la PWA, cachea todos los archivos esenciales
-self.addEventListener('install', event => {
+// Evento: Instalación del Service Worker
+self.addEventListener('install', (event) => {
+  console.log('Service Worker: Instalando y precargando recursos...');
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => {
-        console.log('Service Worker: Cacheando archivos estáticos.');
+      .then((cache) => {
         return cache.addAll(urlsToCache);
       })
-  );
-});
-
-// 2. EVENTO DE FETCH: Intercepta peticiones para servir archivos desde la caché
-self.addEventListener('fetch', event => {
-  // Evita interceptar peticiones de Firebase/Firestore para que los datos sean siempre frescos
-  if (event.request.url.includes('googleapis.com') || event.request.url.includes('gstatic.com') || event.request.url.includes('firebasestorage.googleapis.com')) {
-    return fetch(event.request);
-  }
-
-  // Estrategia Cache-first para recursos estáticos:
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        // Si el archivo está en caché, lo devuelve
-        if (response) {
-          return response;
-        }
-        // Si no está, lo solicita a la red
-        return fetch(event.request);
+      .catch(error => {
+        console.error('Fallo al precargar la caché:', error);
       })
   );
 });
 
-// 3. EVENTO DE ACTIVACIÓN: Limpia las cachés antiguas para ahorrar espacio
-self.addEventListener('activate', event => {
+// Evento: Activación del Service Worker (para limpiar cachés viejas)
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker: Activado. Limpiando cachés antiguas.');
   const cacheWhitelist = [CACHE_NAME];
   event.waitUntil(
-    caches.keys().then(cacheNames => {
+    caches.keys().then((cacheNames) => {
       return Promise.all(
-        cacheNames.map(cacheName => {
+        cacheNames.map((cacheName) => {
           if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Eliminando caché antigua:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
+  );
+});
+
+// Evento: Fetch (Interceptor de red)
+self.addEventListener('fetch', (event) => {
+  // Intentar buscar el recurso en la caché
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        // Si el recurso está en caché, lo devuelve
+        if (response) {
+          return response;
+        }
+        // Si no está en caché, va a la red
+        return fetch(event.request).catch(() => {
+          // Si falla la red (modo offline), podrías devolver una página de error,
+          // pero como precargamos el index, no es estrictamente necesario aquí.
+        });
+      })
   );
 });
