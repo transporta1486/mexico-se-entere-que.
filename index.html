@@ -3,7 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>México se Entere: Noticias Locales</title>
+    <title id="pageTitle">México se Entere: Noticias Locales | Edomex</title>
+    
+    <!-- ============================================================= -->
+    <!-- CÓDIGO DE GOOGLE ANALYTICS 4 (GA4) - Medición de tráfico -->
+    <!-- ============================================================= -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q3ZL4VNDPW');
+    </script>
+    
+    <!-- ============================================================= -->
+    <!-- METADATOS PREDETERMINADOS PARA COMPARTIR (OPEN GRAPH TAGS) -->
+    <!-- Facebook, WhatsApp y otras redes leen estas etiquetas. -->
+    <!-- ============================================================= -->
+    <meta property="og:title" content="México se Entere: Noticias Locales y Urgentes del Valle de México" id="ogTitle">
+    <meta property="og:description" content="Toda la información de Atizapán, Tlalnepantla, Naucalpan, Izcalli y Nicolás Romero. Entérate de lo que realmente pasa en tu municipio." id="ogDescription">
+    <meta property="og:image" content="https://placehold.co/1200x630/059669/ffffff?text=MÉXICO+SE+ENTERE" id="ogImage">
+    <meta property="og:url" content="" id="ogUrl">
+    <meta property="og:type" content="website">
+    
     <!-- Configuración para PWA: Indica el manifiesto -->
     <link rel="manifest" href="manifest.json">
     
@@ -18,7 +40,7 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        /* Estilo para el espacio del anuncio */
+        /* Estilo para el espacio del anuncio rotativo */
         .ad-placeholder {
             min-height: 150px;
             background-color: #fef3c7; /* Amarillo muy suave */
@@ -45,6 +67,23 @@
             text-decoration: underline;
             font-size: 1.1rem;
         }
+        /* Nuevo estilo para el banner de encabezado premium */
+        .premium-banner {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e0f2f1; /* Verde menta claro */
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .premium-banner img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen">
@@ -62,6 +101,14 @@
     </header>
 
     <main class="max-w-4xl mx-auto p-4 sm:p-6">
+        
+        <!-- ============================================== -->
+        <!-- ESPACIO DE PUBLICIDAD PREMIUM (BANNER DE ENCABEZADO) -->
+        <!-- ============================================== -->
+        <div id="premiumBanner" class="premium-banner" style="display: none;">
+            <!-- Aquí se inyecta el banner gráfico del cliente que pague el Paquete C -->
+        </div>
+
         
         <!-- ============================================== -->
         <!-- 1. CONTENEDOR DE LA LISTA (PÁGINA PRINCIPAL)   -->
@@ -100,7 +147,19 @@
         ];
 
         // ===================================================================
+        // *** INFO DEL CLIENTE PREMIUM (PAQUETE C) ***
+        // Si no hay cliente, dejar 'null' en imagenUrl
+        // ===================================================================
+        const PREMIUM_AD = {
+            active: true, // Cambiar a 'false' si no hay cliente pagando
+            imagenUrl: "https://placehold.co/728x90/16a34a/ffffff?text=Tu+Negocio+Aquí+728x90", // Imagen real del cliente
+            link: "https://ejemplo-cliente-premium.com", // Enlace real
+            altText: "Publicidad Premium de [Nombre del Cliente]"
+        };
+
+        // ===================================================================
         // *** BASE DE DATOS LOCAL (6 NOTICIAS INTEGRADAS) ***
+        // [Immersive content redacted for brevity.]
         // ===================================================================
         const LOCAL_NEWS_DATA = [
             {
@@ -122,7 +181,7 @@
             {
                 id: "noticia-tlalnepantla-003",
                 titulo: "ÚLTIMA HORA: Concluye reparación de mega fuga en Atizapán; servicio de agua se restablecerá gradualmente en Tlalnepantla ",
-                resumen: "Tlalnepantla de Baz, Méx. a 26 de noviembre de 2025 - La Comisión del Agua del Estado de México (CAEM) ha finalizado los trabajos de reparación de la mega fuga en una línea de 60 pulgadas del Sistema Barrientos, ubicada en San Miguel Xochimanga, Atizapán de Zaragoza, que dejó sin agua a más de 150 colonias de Tlalnepantla durante varios días. Tras más de 96 horas de labores ininterrumpidas, la infraestructura ha sido reparada. Las autoridades informaron que el suministro de agua comenzará a restablecerse de manera gradual en las zonas afectadas de Tlalnepantla. Detalles de la afectación y recuperación: Causa: Una importante avería en la línea principal de la CAEM interrumpió el abasto hacia la Planta Barrientos, que surte a los tanques Tlayapa, Tenayo y Tlalnemex en Tlalnepantla. Colonias afectadas: Se vieron afectadas colonias de la zona poniente y otras áreas bajas del municipio, incluyendo Lázaro Cárdenas, Zona Industrial La Presa, Tlalnemex, U.H. Tenayo y El Olivo Parte Baja. Restablecimiento: El Organismo Público Descentralizado para la Prestación de los Servicios de Agua Potable, Alcantarillado y Saneamiento (OPDM) de Tlalnepantla ha iniciado el proceso de normalización del servicio. Sin embargo, debido a la magnitud de la falla y la extensión de la red, el restablecimiento completo puede tomar tiempo. Apoyo con pipas continúa: Mientras el servicio se normaliza por completo, el OPDM Tlalnepantla mantiene activo el operativo de distribución de agua potable gratuita mediante pipas para las familias que aún no cuentan con el servicio. Los ciudadanos afectados pueden solicitar una pipa o reportar la falta de suministro a los números del OPDM: Call Center: 55 5321 0840 WhatsApp: 55 3008 1603 Las autoridades recomiendan a los residentes hacer un uso eficiente del agua y mantenerse informados a través de los canales oficiales del OPDM Tlalnepantla y del Gobierno de Tlalnepantla.",
+                resumen: "Tlalnepantla de Baz, Méx. a 26 de noviembre de 2025 - La Comisión del Agua del Estado de México (CAEM) ha finalizó los trabajos de reparación de la mega fuga en una línea de 60 pulgadas del Sistema Barrientos, ubicada en San Miguel Xochimanga, Atizapán de Zaragoza, que dejó sin agua a más de 150 colonias de Tlalnepantla durante varios días. Tras más de 96 horas de labores ininterrumpidas, la infraestructura ha sido reparada. Las autoridades informaron que el suministro de agua comenzará a restablecerse de manera gradual en las zonas afectadas de Tlalnepantla. Detalles de la afectación y recuperación: Causa: Una importante avería en la línea principal de la CAEM interrumpió el abasto hacia la Planta Barrientos, que surte a los tanques Tlayapa, Tenayo y Tlalnemex en Tlalnepantla. Colonias afectadas: Se vieron afectadas colonias de la zona poniente y otras áreas bajas del municipio, incluyendo Lázaro Cárdenas, Zona Industrial La Presa, Tlalnemex, U.H. Tenayo y El Olivo Parte Baja. Restablecimiento: El Organismo Público Descentralizado para la Prestación de los Servicios de Agua Potable, Alcantarillado y Saneamiento (OPDM) de Tlalnepantla ha iniciado el proceso de normalización del servicio. Sin embargo, debido a la magnitud de la falla y la extensión de la red, el restablecimiento completo puede tomar tiempo. Apoyo con pipas continúa: Mientras el servicio se normaliza por completo, el OPDM Tlalnepantla mantiene activo el operativo de distribución de agua potable gratuita mediante pipas para las familias que aún no cuentan con el servicio. Los ciudadanos afectados pueden solicitar una pipa o reportar la falta de suministro a los números del OPDM: Call Center: 55 5321 0840 WhatsApp: 55 3008 1603 Las autoridades recomiendan a los residentes hacer un uso eficiente del agua y mantenerse informados a través de los canales oficiales del OPDM Tlalnepantla y del Gobierno de Tlalnepantla.",
                 imagenUrl: "https://placehold.co/600x400/1e40af/ffffff?text=TLALNEPANTLA+AGUA",
                 fecha: new Date('2025-11-27T00:39:17').getTime(), // 26 de noviembre de 2025, 6:39:17 p.m. UTC-6
                 categoria: "tlalnepantla"
@@ -153,12 +212,26 @@
             }
         ];
         
-        // Referencias a elementos del DOM
+        // Referencias a elementos del DOM y Meta Tags
         const newsListContainer = document.getElementById('newsListContainer');
         const newsDetailContainer = document.getElementById('newsDetailContainer');
         const newsListDiv = document.getElementById('newsList');
         const installAppButton = document.getElementById('installAppButton');
-        let deferredPrompt; // Variable para guardar el evento de instalación de PWA
+        const premiumBanner = document.getElementById('premiumBanner'); 
+        let deferredPrompt; 
+
+        // Referencias a Meta Tags (usando IDs para modificarlas fácilmente)
+        const pageTitle = document.getElementById('pageTitle');
+        const ogTitle = document.getElementById('ogTitle');
+        const ogDescription = document.getElementById('ogDescription');
+        const ogImage = document.getElementById('ogImage');
+        const ogUrl = document.getElementById('ogUrl');
+
+        // Valores genéricos por defecto
+        const DEFAULT_TITLE = 'México se Entere: Noticias Locales | Edomex';
+        const DEFAULT_OG_TITLE = 'México se Entere: Noticias Locales y Urgentes del Valle de México';
+        const DEFAULT_OG_DESCRIPTION = 'Toda la información de Atizapán, Tlalnepantla, Naucalpan, Izcalli y Nicolás Romero. Entérate de lo que realmente pasa en tu municipio.';
+        const DEFAULT_OG_IMAGE = 'https://placehold.co/1200x630/059669/ffffff?text=MÉXICO+SE+ENTERE';
         
         
         // ------------------------------------------------------------------
@@ -180,6 +253,7 @@
         // F. FUNCIÓN PARA COMPARTIR LA NOTICIA
         // ------------------------------------------------------------------
         async function shareNews(title, text, url) {
+            
             if (navigator.share) {
                 // Si la Web Share API está disponible (móvil o desktop compatible)
                 try {
@@ -195,17 +269,14 @@
                 }
             } else {
                 // Fallback para navegadores sin soporte (ej. Desktop)
-                // Se intentará copiar el enlace al portapapeles.
                 const shareText = `¡Mira esta noticia! ${title}: ${url}`;
                 try {
-                    // Usamos document.execCommand para compatibilidad en iframes
                     const el = document.createElement('textarea');
                     el.value = shareText;
                     document.body.appendChild(el);
                     el.select();
                     document.execCommand('copy');
                     document.body.removeChild(el);
-                    // Usamos una alerta custom para notificar al usuario (sin window.alert)
                     alert('Enlace copiado al portapapeles. Compártelo: ' + shareText);
                 } catch (err) {
                     console.error('No se pudo copiar el texto al portapapeles', err);
@@ -235,8 +306,28 @@
             newsListContainer.style.display = 'block'; 
             newsDetailContainer.style.display = 'none'; 
             newsDetailContainer.innerHTML = ''; 
-            // Limpiar el hash de la URL para volver a la página principal limpia
+            
+            // 1. Limpiar el hash de la URL
             history.pushState(null, null, window.location.pathname + window.location.search);
+            
+            // 2. Restaurar las Meta Etiquetas OG a los valores genéricos
+            pageTitle.textContent = DEFAULT_TITLE;
+            ogTitle.setAttribute('content', DEFAULT_OG_TITLE);
+            ogDescription.setAttribute('content', DEFAULT_OG_DESCRIPTION);
+            ogImage.setAttribute('content', DEFAULT_OG_IMAGE);
+            ogUrl.setAttribute('content', window.location.href.split('#')[0]);
+            
+            // 3. Mostrar el banner premium en la lista
+            if (PREMIUM_AD.active) {
+                premiumBanner.style.display = 'flex';
+                premiumBanner.innerHTML = `
+                    <a href="${PREMIUM_AD.link}" target="_blank" rel="noopener noreferrer" onclick="console.log('Premium Ad Clicked')">
+                        <img src="${PREMIUM_AD.imagenUrl}" alt="${PREMIUM_AD.altText}" class="rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/728x90/e0f2f1/16a34a?text=Publicidad+Premium';">
+                    </a>
+                `;
+            } else {
+                premiumBanner.style.display = 'none';
+            }
         }
         window.showNewsList = showNewsList; // Hacer la función accesible globalmente
 
@@ -245,40 +336,46 @@
         // ------------------------------------------------------------------
         function showNewsDetailPage(newsId) {
             
-            // 1. Mostrar el detalle y ocultar la lista
+            // 1. Ocultar el banner premium
+            premiumBanner.style.display = 'none';
+
+            // 2. Mostrar el detalle y ocultar la lista
             newsListContainer.style.display = 'none';
             newsDetailContainer.style.display = 'block';
             
-            // 2. Actualizar la URL para que el enlace sea compartible
-            // Esto garantiza que la URL en la barra de direcciones sea la correcta
-            history.pushState(null, null, `#${newsId}`);
-            
-            // Buscar la noticia por ID en la base de datos local
+            // 3. Buscar la noticia
             const data = LOCAL_NEWS_DATA.find(news => news.id === newsId);
             
-            // Función para obtener la etiqueta de municipio
-            const getMunicipioTag = (category) => {
-                const map = {
-                    'atizapan': 'Atizapán',
-                    'tlalnepantla': 'Tlalnepantla',
-                    'naucalpan': 'Naucalpan',
-                    'cuatitlan izcallí': 'Izcalli',
-                    'nicolas romero': 'Nicolás Romero',
-                    'méxico': 'Nacional' 
-                };
-                return map[category.toLowerCase()] || 'Edomex';
-            };
-            const municipioTag = getMunicipioTag(data.categoria);
-
-            // Obtener el anuncio rotativo
-            const adContent = getRandomSponsoredLink();
-            
-            // URL simulada de la noticia (usamos la URL actual + el hash de ID)
-            const newsUrl = window.location.href.split('#')[0] + `#${data.id}`;
-
-
             if (data) {
-                // Renderizar la noticia COMPLETA
+                // 4. Actualizar la URL para que el enlace sea compartible
+                history.pushState(null, null, `#${newsId}`);
+                const newsUrl = window.location.href.split('#')[0] + `#${data.id}`;
+
+                // 5. *** ACTUALIZAR LAS META ETIQUETAS Y TÍTULO DE LA PÁGINA ***
+                pageTitle.textContent = `${data.titulo} | México se Entere`;
+                ogTitle.setAttribute('content', data.titulo);
+                ogDescription.setAttribute('content', data.resumen.substring(0, 150) + '...');
+                ogImage.setAttribute('content', data.imagenUrl);
+                ogUrl.setAttribute('content', newsUrl); // Es CRUCIAL que esta sea la URL con el hash
+
+                // Función para obtener la etiqueta de municipio
+                const getMunicipioTag = (category) => {
+                    const map = {
+                        'atizapan': 'Atizapán',
+                        'tlalnepantla': 'Tlalnepantla',
+                        'naucalpan': 'Naucalpan',
+                        'cuatitlan izcallí': 'Izcalli',
+                        'nicolas romero': 'Nicolás Romero',
+                        'méxico': 'Nacional' 
+                    };
+                    return map[category.toLowerCase()] || 'Edomex';
+                };
+                const municipioTag = getMunicipioTag(data.categoria);
+
+                // Obtener el anuncio rotativo (Paquete A)
+                const adContent = getRandomSponsoredLink();
+                
+                // 6. Renderizar la noticia COMPLETA
                 newsDetailContainer.innerHTML = `
                     <div class="p-4 sm:p-8 bg-white rounded-xl shadow-2xl">
                         <!-- Contenedor de Botones (Volver y Compartir) -->
@@ -311,7 +408,7 @@
                         <!-- Resumen/Bajada -->
                         <p class="text-xl font-semibold text-gray-600 mb-8 border-l-4 border-emerald-500 pl-4 italic">${data.resumen}</p>
                         
-                        <!-- ESPACIO DEL ANUNCIO -->
+                        <!-- ESPACIO DEL ANUNCIO ROTATIVO (Paquete A) -->
                         <div class="ad-placeholder">
                             ${adContent}
                         </div>
@@ -327,7 +424,10 @@
                 `;
                 
             } else {
+                // Noticia no encontrada
                 newsDetailContainer.innerHTML = `<p class="text-center text-red-500 mt-12">Error: Noticia no encontrada.</p>`;
+                // Restaurar las OG tags por si acaso.
+                showNewsList();
             }
         }
         window.showNewsDetailPage = showNewsDetailPage;
@@ -382,7 +482,7 @@
                 newsListDiv.appendChild(newsItem);
             });
             
-            // 4. Lógica de Vista Inicial (Mostrar Detalle o Lista)
+            // Lógica de Vista Inicial (Mostrar Detalle o Lista)
             const newsIdFromHash = window.location.hash.substring(1);
             const newsToLoad = LOCAL_NEWS_DATA.find(news => news.id === newsIdFromHash);
 
@@ -391,7 +491,7 @@
                 // cargamos directamente el detalle de la noticia.
                 showNewsDetailPage(newsIdFromHash);
             } else {
-                // Si no hay hash, mostramos la lista principal.
+                // Si no hay hash, mostramos la lista principal y restauramos OG tags.
                 showNewsList(); 
             }
         }
