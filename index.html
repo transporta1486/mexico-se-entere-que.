@@ -3,331 +3,539 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>México se Entere: Noticias Locales</title>
-    <!-- Configuración PWA: Enlace al Manifest -->
+    <title id="pageTitle">México se Entere: Noticias Locales | Edomex</title>
+    
+    <!-- ============================================================= -->
+    <!-- CÓDIGO DE GOOGLE ANALYTICS 4 (GA4) - Medición de tráfico -->
+    <!-- ============================================================= -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-Q3ZL4VNDPW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-Q3ZL4VNDPW');
+    </script>
+    
+    <!-- ============================================================= -->
+    <!-- METADATOS PREDETERMINADOS PARA COMPARTIR (OPEN GRAPH TAGS) -->
+    <!-- Facebook, WhatsApp y otras redes leen estas etiquetas. -->
+    <!-- ============================================================= -->
+    <meta property="og:title" content="México se Entere: Noticias Locales y Urgentes del Valle de México" id="ogTitle">
+    <meta property="og:description" content="Toda la información de Atizapán, Tlalnepantla, Naucalpan, Izcalli y Nicolás Romero. Entérate de lo que realmente pasa en tu municipio." id="ogDescription">
+    <meta property="og:image" content="https://placehold.co/1200x630/059669/ffffff?text=MÉXICO+SE+ENTERE" id="ogImage">
+    <meta property="og:url" content="" id="ogUrl">
+    <meta property="og:type" content="website">
+    
+    <!-- Configuración para PWA: Indica el manifiesto -->
     <link rel="manifest" href="manifest.json">
-    <!-- Carga Tailwind CSS -->
+    
+    <!-- Carga de Tailwind CSS para la estética -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
+        :root { font-family: 'Inter', sans-serif; }
+        /* Para limitar las líneas del resumen en la lista */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-        .card {
-            transition: transform 0.2s, box-shadow 0.2s;
+        /* Estilo para el espacio del anuncio rotativo */
+        .ad-placeholder {
+            min-height: 150px;
+            background-color: #fef3c7; /* Amarillo muy suave */
+            border: 2px dashed #fcd34d; /* Borde punteado amarillo */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #b45309;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            flex-direction: column;
+            transition: all 0.3s ease-in-out;
         }
-        .card:hover {
-            transform: translateY(-2px);
+        .ad-placeholder:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: #fffbeb;
+            transform: scale(1.02);
         }
-        /* Clase para manejar el formato del contenido completo */
-        .full-content {
-            white-space: pre-wrap; 
+        .ad-placeholder a {
+            color: #b45309;
+            text-decoration: underline;
+            font-size: 1.1rem;
+        }
+        /* Nuevo estilo para el banner de encabezado premium */
+        .premium-banner {
+            width: 100%;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e0f2f1; /* Verde menta claro */
+            border-radius: 0.75rem;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .premium-banner img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
         }
     </style>
 </head>
-<body class="min-h-screen p-4 sm:p-8">
-
-    <div class="max-w-3xl mx-auto">
-        <header class="text-center mb-8 bg-white p-6 rounded-xl shadow-md border-t-4 border-emerald-500">
-            <h1 class="text-4xl font-extrabold text-emerald-700">México se Entere</h1>
-            <p class="text-lg text-gray-600 mt-2">Noticias de Atizapán, Tlalnepantla, Naucalpan e Izcalli.</p>
-            
-            <!-- Enlace al formulario de carga -->
-            <a href="news_upload_form.html" class="inline-block mt-4 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg shadow-md transition duration-200">
-                Administración (Subir Noticias)
-            </a>
-            <p class="text-xs text-gray-400 mt-3">ID de Usuario: <span id="userIdDisplay" class="font-mono bg-gray-100 px-1 rounded">Cargando...</span></p>
-        </header>
-
-        <!-- Contenedor de la lista de noticias -->
-        <div id="newsListContainer" class="space-y-6">
-            <h2 class="text-2xl font-bold text-gray-700 mb-4">Últimas Noticias</h2>
-            <div id="newsList" class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                <!-- Las noticias se cargarán aquí -->
+<body class="bg-gray-100 min-h-screen">
+    <header class="bg-emerald-600 text-white p-4 shadow-xl">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-3xl font-bold">México se Entere</h1>
+                <p class="text-sm opacity-90">Atizapán, Tlane, Naucalpan e Izcalli</p>
             </div>
-            <p id="loadingStatus" class="text-center text-gray-500 mt-8">Cargando noticias...</p>
+            <!-- Botón de Instalación PWA (será visible si el Service Worker falla o si el navegador lo requiere) -->
+            <button id="installAppButton" style="display:none;" class="bg-white text-emerald-600 py-1 px-3 rounded-full font-semibold shadow hover:bg-emerald-50 transition duration-200">
+                Instalar App
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto p-4 sm:p-6">
+        
+        <!-- ============================================== -->
+        <!-- ESPACIO DE PUBLICIDAD PREMIUM (BANNER DE ENCABEZADO) -->
+        <!-- ============================================== -->
+        <div id="premiumBanner" class="premium-banner" style="display: none;">
+            <!-- Aquí se inyecta el banner gráfico del cliente que pague el Paquete C -->
         </div>
 
-        <!-- Contenedor para el detalle de la noticia (Inicialmente oculto) -->
-        <div id="newsDetailContainer" class="hidden">
-            <!-- El contenido del detalle de la noticia cargará aquí -->
+        
+        <!-- ============================================== -->
+        <!-- 1. CONTENEDOR DE LA LISTA (PÁGINA PRINCIPAL)   -->
+        <!-- ============================================== -->
+        <div id="newsListContainer">
+            <h2 class="text-3xl font-extrabold text-gray-800 mb-6 border-b-2 pb-2 border-emerald-500">Últimas Noticias Locales</h2>
+            
+            <!-- Aquí se inyectan las tarjetas -->
+            <div id="newsList" class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                <p class="col-span-full text-center text-gray-500 py-10">Cargando contenido...</p>
+            </div>
         </div>
 
-    </div>
+        <!-- ============================================== -->
+        <!-- 2. CONTENEDOR DE DETALLE (INICIA OCULTO)       -->
+        <!-- ============================================== -->
+        <div id="newsDetailContainer" style="display: none;">
+            <!-- La noticia completa se carga aquí -->
+        </div>
 
-    <!-- SCRIPT PRINCIPAL CON TODA LA LÓGICA FUSIONADA -->
-    <script type="module">
-        // Importaciones de Firebase
-        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            query, 
-            onSnapshot, 
-            doc, 
-            getDoc 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    </main>
+    
+    <!-- ============================================== -->
+    <!-- CÓDIGO JAVASCRIPT Y LÓGICA DE DATOS (SIN FIREBASE) -->
+    <!-- ============================================== -->
+    <script>
         
-        // Habilitar logs de debug de Firebase
-        setLogLevel('debug'); 
+        // ===================================================================
+        // *** ENLACES PATROCINADOS DEL PROPIETARIO ***
+        // ===================================================================
+        const SPONSORED_LINKS = [
+            { title: "ManzaBoom - El Mejor Software para tu Negocio", url: "https://manzaboom.com" },
+            { title: "Mudanzas en México - ¡Tu mudanza sin estrés!", url: "https://mudanzas-en-mexico.com" },
+            { title: "Tacos de Canasta en México - Sabor y Tradición", url: "https://tacosdecanastaenmexico.com" },
+            { title: "Lexfortis Legal - Asesoría Jurídica y Corporativa", url: "https://lexfortis.legal" }
+        ];
 
-        // -----------------------------------------------------------
-        // CONFIGURACIÓN GLOBAL (Configuración forzada y optimizada)
-        // -----------------------------------------------------------
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        // **CONFIGURACIÓN DIRECTA DE FIREBASE SIN CAMPOS OPCIONALES**
-        const firebaseConfig = {
-            apiKey: "AIzaSyBPbCmeaCd6sYJoO_9JqEWzWievDw_fFwc",
-            authDomain: "noticiaspwa-58270.firebaseapp.com",
-            projectId: "noticiaspwa-58270", 
-            storageBucket: "noticiaspwa-58270.firebasestorage.app",
-            messagingSenderId: "758477934480",
-            appId: "1:758477934480:web:10f781e64eff91b21a2d15"
-            // measurementId ha sido eliminado.
+        // ===================================================================
+        // *** INFO DEL CLIENTE PREMIUM (PAQUETE C) ***
+        // Si no hay cliente, dejar 'null' en imagenUrl
+        // ===================================================================
+        const PREMIUM_AD = {
+            active: true, // Cambiar a 'false' si no hay cliente pagando
+            imagenUrl: "https://placehold.co/728x90/16a34a/ffffff?text=Tu+Negocio+Aquí+728x90", // Imagen real del cliente
+            link: "https://ejemplo-cliente-premium.com", // Enlace real
+            altText: "Publicidad Premium de [Nombre del Cliente]"
         };
+
+        // ===================================================================
+        // *** BASE DE DATOS LOCAL (6 NOTICIAS INTEGRADAS) ***
+        // [Immersive content redacted for brevity.]
+        // ===================================================================
+        const LOCAL_NEWS_DATA = [
+            {
+                id: "noticia-noroña-001",
+                titulo: "Gerardo Fernández Noroña está siendo intensamente criticado por sus recientes declaraciones sobre Grecia Quiroz",
+                resumen: "CIUDAD DE MÉXICO - El senador de Morena, Gerardo Fernández Noroña, se encuentra en el ojo del huracán tras sus controvertidas declaraciones dirigidas a Grecia Quiroz, alcaldesa de Uruapan, Michoacán, y viuda del asesinado alcalde Carlos Manzo. Sus comentarios han provocado una ola de indignación y acusaciones de violencia política de género, generando un inusual vacío en su propia conferencia de prensa. Las Declaraciones de la Polémica La controversia estalló después de que Grecia Quiroz solicitara públicamente que se investigara a los morenistas Raúl Morón Orozco (senador) y Leonel Godoy Rangel (diputado federal) por el homicidio de su esposo, ocurrido a principios de noviembre. Quiroz argumentó que la detención de un presunto autor intelectual no era suficiente y cuestionó las líneas de investigación. En respuesta, Fernández Noroña calificó las peticiones de la alcaldesa como 'irresponsables' y 'políticas', asegurando que a Quiroz 'se le despertó la ambición' por buscar la gubernatura de Michoacán. Además, la tildó de 'fascista' y de 'ultraderecha' por sus señalamientos. Reacciones y Aislamiento Las palabras de Noroña desataron una condena generalizada. Claudia Sheinbaum, presidenta de México, intervino públicamente para pedir 'sensibilidad' con la alcaldesa, dadas las circunstancias de duelo que atraviesa. Senadoras de Morena y oposición se deslindaron de Noroña y lo acusaron directamente de incurrir en violencia política de género y revictimización. La militancia y usuarios de redes criticaron su falta de empatía, llevando incluso a que Noroña desactivara comentarios en sus publicaciones. En un hecho simbólico, cuando Noroña convocó a una conferencia de prensa en el Senado para defender su postura y negar las acusaciones de misoginia, fue ignorado por la mayoría de los medios acreditados, quienes dejaron la sala vacía, evidenciando el rechazo a sus dichos.",
+                imagenUrl: "https://placehold.co/600x400/94a3b8/ffffff?text=NACIONAL+POL%C3%8DTICA",
+                fecha: new Date('2025-11-26T18:07:16').getTime(), // 26 de noviembre de 2025, 12:07:16 p.m. UTC-6
+                categoria: "México"
+            },
+            {
+                id: "noticia-nicolasromero-002",
+                titulo: "Denuncian vecinos de la Col. Francisco I. Madero represión policial tras cuestionar obras inconclusas en Nicolás Romero",
+                resumen: "NICOLÁS ROMERO, Méx.— Residentes de la colonia Francisco I. Madero vivieron momentos de tensión y agresión 'en carne propia' este miércoles, cuando, según sus testimonios, fueron objeto de 'prepotencia, represión y violencia' por parte de elementos de la policía municipal. Los hechos ocurrieron luego de que un grupo de habitantes se acercara a las autoridades locales para hacer observaciones y cuestionar el notable retraso en la finalización de obras de pavimentación y rehabilitación de una calle en su comunidad. Los vecinos buscaban dialogar sobre la ejecución del proyecto, que presenta un avance cuestionable y ha generado molestias en la zona. De acuerdo con la denuncia pública, la respuesta de las fuerzas del orden no fue la de mediar o atender las inquietudes ciudadanas, sino que escaló rápidamente a una confrontación, resultando en agresiones directas hacia los colonos que exigían transparencia y la conclusión de los trabajos prometidos. Hasta el momento, las autoridades municipales de Nicolás Romero no han emitido una declaración oficial sobre los métodos empleados por los agentes ni sobre el estado actual de las obras en la mencionada colonia. Los afectados exigen una investigación y que se tomen medidas contra los responsables de la agresión.",
+                imagenUrl: "https://placehold.co/600x400/0f766e/ffffff?text=NICOL%C3%81S+ROMERO",
+                fecha: new Date('2025-11-26T22:20:31').getTime(), // 26 de noviembre de 2025, 4:20:31 p.m. UTC-6
+                categoria: "nicolas romero"
+            },
+            {
+                id: "noticia-tlalnepantla-003",
+                titulo: "ÚLTIMA HORA: Concluye reparación de mega fuga en Atizapán; servicio de agua se restablecerá gradualmente en Tlalnepantla ",
+                resumen: "Tlalnepantla de Baz, Méx. a 26 de noviembre de 2025 - La Comisión del Agua del Estado de México (CAEM) ha finalizó los trabajos de reparación de la mega fuga en una línea de 60 pulgadas del Sistema Barrientos, ubicada en San Miguel Xochimanga, Atizapán de Zaragoza, que dejó sin agua a más de 150 colonias de Tlalnepantla durante varios días. Tras más de 96 horas de labores ininterrumpidas, la infraestructura ha sido reparada. Las autoridades informaron que el suministro de agua comenzará a restablecerse de manera gradual en las zonas afectadas de Tlalnepantla. Detalles de la afectación y recuperación: Causa: Una importante avería en la línea principal de la CAEM interrumpió el abasto hacia la Planta Barrientos, que surte a los tanques Tlayapa, Tenayo y Tlalnemex en Tlalnepantla. Colonias afectadas: Se vieron afectadas colonias de la zona poniente y otras áreas bajas del municipio, incluyendo Lázaro Cárdenas, Zona Industrial La Presa, Tlalnemex, U.H. Tenayo y El Olivo Parte Baja. Restablecimiento: El Organismo Público Descentralizado para la Prestación de los Servicios de Agua Potable, Alcantarillado y Saneamiento (OPDM) de Tlalnepantla ha iniciado el proceso de normalización del servicio. Sin embargo, debido a la magnitud de la falla y la extensión de la red, el restablecimiento completo puede tomar tiempo. Apoyo con pipas continúa: Mientras el servicio se normaliza por completo, el OPDM Tlalnepantla mantiene activo el operativo de distribución de agua potable gratuita mediante pipas para las familias que aún no cuentan con el servicio. Los ciudadanos afectados pueden solicitar una pipa o reportar la falta de suministro a los números del OPDM: Call Center: 55 5321 0840 WhatsApp: 55 3008 1603 Las autoridades recomiendan a los residentes hacer un uso eficiente del agua y mantenerse informados a través de los canales oficiales del OPDM Tlalnepantla y del Gobierno de Tlalnepantla.",
+                imagenUrl: "https://placehold.co/600x400/1e40af/ffffff?text=TLALNEPANTLA+AGUA",
+                fecha: new Date('2025-11-27T00:39:17').getTime(), // 26 de noviembre de 2025, 6:39:17 p.m. UTC-6
+                categoria: "tlalnepantla"
+            },
+            {
+                id: "noticia-izcalli-004",
+                titulo: "Buscan a Jeshua, desaparecido en Cuautitlán Izcalli...",
+                resumen: "La noche del pasado 13 de noviembre, Jeshua salió de la casa de un amigo en la colonia Jardines de la Hacienda, por la hora ya no alcanzó transporte y tuvo que caminar, se dirigía hacia su casa en la colonia Arcos del Alba en el municipio de Cuautitlán Izcalli, pero desapareció mientras caminaba a un lado de la autopista México-Querétaro, así indicó su mamá Karla Rendón. Han pasado 14 días y no hay indicios que lleven al paradero de Jeshua e incluso, su familia se ha enfrentado a varias complicaciones, en una primera instancia en el área de búsqueda de personas desaparecidas, la cual no trabaja durante los fines de semana y menos durante fines de semana largos, por ello, pese a que levantó la denuncia el viernes, entre vuelta y vuelta de una sede a otra, salió de la Fiscalía General de Justicia del Estado de México (FGJEM) hasta las 5:00 de la mañana del sábado 15 de noviembre con la ficha de búsqueda.",
+                imagenUrl: "https://placehold.co/600x400/991b1f/ffffff?text=IZCALLI+BUSQUEDA",
+                fecha: new Date('2025-11-26T21:00:41').getTime(), // 26 de noviembre de 2025, 3:00:41 p.m. UTC-6
+                categoria: "Cuatitlan Izcallí"
+            },
+            {
+                id: "noticia-atizapan-005",
+                titulo: "¡INDIGNANTE! ¡CORRUPCIÓN Y CINISMO GUBERNAMENTAL EN ATIZAPÁN!",
+                resumen: "¡VECINOS CLAMAN JUSTICIA MIENTRAS EL GOBIERNO SE BURLA DE SU TRAGEDIA! Un hedor a podredumbre política se mezcla con las aguas negras que aún inundan los hogares de San Miguel Xochimanga. La 'megafuga' del pasado 22 de noviembre, cortesía de la negligencia de la CAEM, ha dejado a decenas de familias en la miseria absoluta, pero la peor inundación es la de la indolencia oficial. ¡CHANTAJE OFICIAL: O PAGAS EL PREDIAL O TE HUNDES EN LA MISERIA! Testimonios desgarradores revelan el modus operandi del gobierno municipal. Brigadistas y funcionarios, con una frialdad escalofriante, condicionan la ayuda a los damnificados: 'Si no estás al corriente con tu predial, ¡olvídate del apoyo!' ¿Es este el precio por recuperar el refrigerador, la cama o la estufa que la ineptitud gubernamental les arrebató? ¡Es un chantaje descarado en medio de la desgracia! PÉRDIDAS TOTALES Y UNA AYUDA DE CARIDAD Las imágenes son dantescas: hogares convertidos en ciénagas, muebles flotando y la desesperación pintada en los rostros de quienes lo perdieron todo. 'Perdimos todo, se nos ahogaron hasta los animales', gritan los afectados, que con cubetas y a mano limpia intentan rescatar lo poco que queda, mientras la ayuda real brilla por su ausencia. La tragedia, que pudo haberse evitado, ahora es el escenario perfecto para la rapiña burocrática. La ciudadanía exige indemnizaciones justas, pero recibe a cambio promesas vacías y condiciones leoninas. ¿Hasta cuándo permitirá el pueblo de Atizapán este atropello? ¡La indignación crece y la olla de presión social está a punto de estallar!",
+                imagenUrl: "https://placehold.co/600x400/f97316/ffffff?text=ATIZAP%C3%81N+INUNDACI%C3%93N",
+                fecha: new Date('2025-11-26T23:13:28').getTime(), // 26 de noviembre de 2025, 5:13:28 p.m. UTC-6
+                categoria: "atizapan"
+            },
+            {
+                id: "noticia-naucalpan-006",
+                titulo: "¡Pánico TOTAL en Naucalpan! Misterioso 'Enjambre Sísmico' Desata el Terror y Siembra Dudas sobre Fallas Ocultas",
+                resumen: "NAUCALPAN, Méx.— ¡La tierra se abre bajo nuestros pies! El pasado jueves, una serie de 'jalones' mortales sacudieron a los habitantes de Naucalpan, desatando el caos y el pánico generalizado. Lo que las autoridades minimizan como 'microsismos' de magnitudes insignificantes, fue en realidad una oleada de terror que puso a prueba los nervios de miles de familias. Testigos aterrorizados narran cómo los muebles se movieron violentamente y se escucharon estruendos apocalípticos, como si el fin del mundo estuviera cerca. 'Se sintió como si fuera una explosión, fue demasiado fuerte', declaró un residente de Lomas de Sotelo, visiblemente afectado. Microsismos en Naucalpan Generan Inquietud, Autoridades Monitorean la Situación NAUCALPAN, Méx.— Residentes de Naucalpan experimentaron microsismos el pasado jueves, generando preocupación entre la población. Aunque el Servicio Sismológico Nacional reportó magnitudes menores, los eventos causaron alarma en diversas zonas del municipio. Los microsismos, que no superaron los 2.5 grados de magnitud según el Servicio Sismológico Nacional, fueron perceptibles para los habitantes, quienes reportaron movimientos y ruidos asociados. Un residente de Lomas de Sotelo describió la sensación como 'fuerte'.",
+                imagenUrl: "https://placehold.co/600x400/ca8a04/ffffff?text=NAUCALPAN+SISMOS",
+                fecha: new Date('2025-11-27T00:20:15').getTime(), // 26 de noviembre de 2025, 6:20:15 p.m. UTC-6
+                categoria: "Naucalpan"
+            }
+        ];
         
-        let app;
-        let auth;
-        let db;
-        let userId = null;
+        // Referencias a elementos del DOM y Meta Tags
+        const newsListContainer = document.getElementById('newsListContainer');
+        const newsDetailContainer = document.getElementById('newsDetailContainer');
+        const newsListDiv = document.getElementById('newsList');
+        const installAppButton = document.getElementById('installAppButton');
+        const premiumBanner = document.getElementById('premiumBanner'); 
+        let deferredPrompt; 
+
+        // Referencias a Meta Tags (usando IDs para modificarlas fácilmente)
+        const pageTitle = document.getElementById('pageTitle');
+        const ogTitle = document.getElementById('ogTitle');
+        const ogDescription = document.getElementById('ogDescription');
+        const ogImage = document.getElementById('ogImage');
+        const ogUrl = document.getElementById('ogUrl');
+
+        // Valores genéricos por defecto
+        const DEFAULT_TITLE = 'México se Entere: Noticias Locales | Edomex';
+        const DEFAULT_OG_TITLE = 'México se Entere: Noticias Locales y Urgentes del Valle de México';
+        const DEFAULT_OG_DESCRIPTION = 'Toda la información de Atizapán, Tlalnepantla, Naucalpan, Izcalli y Nicolás Romero. Entérate de lo que realmente pasa en tu municipio.';
+        const DEFAULT_OG_IMAGE = 'https://placehold.co/1200x630/059669/ffffff?text=MÉXICO+SE+ENTERE';
         
-        // Elementos DOM
-        const newsListContainer = document.getElementById('newsListContainer'); 
-        const newsDetailContainer = document.getElementById('newsDetailContainer'); 
-        const newsListDiv = document.getElementById('newsList'); 
-        const loadingStatusEl = document.getElementById('loadingStatus');
-        const userIdDisplay = document.getElementById('userIdDisplay');
-
-
-        // -----------------------------------------------------------
-        // INICIALIZACIÓN DE FIREBASE Y AUTH
-        // -----------------------------------------------------------
-        function initializeFirebase() {
-            try {
-                
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app); 
-                return true;
-
-            } catch (error) {
-                // El error de "Configuración de Firebase incompleta" se captura aquí.
-                console.error("CRÍTICO: Error al inicializar Firebase:", error.message);
-                loadingStatusEl.textContent = `❌ Error de inicio de Firebase: ${error.message}. ¡Verifica tu ID de proyecto!`;
-                return false;
-            }
-        }
-
-        async function setupAuthentication() {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        userIdDisplay.textContent = user.uid;
-                        listenForNews(); 
-                    } else {
-                        userIdDisplay.textContent = 'Anónimo';
-                    }
-                });
-
-            } catch (error) {
-                console.error("CRÍTICO: Error en la autenticación:", error);
-                loadingStatusEl.textContent = `❌ Error de autenticación: ${error.message}`;
-            }
-        }
-
-
-        // -----------------------------------------------------------
-        // LÓGICA DE DETALLE Y NAVEGACIÓN (Funciones accesibles globalmente)
-        // -----------------------------------------------------------
-
-        /** Muestra la vista de la lista principal de noticias. */
-        function showNewsList() {
-            newsListContainer.classList.remove('hidden'); 
-            newsDetailContainer.classList.add('hidden'); 
-        }
-
-        /** Carga y muestra el contenido completo de una noticia específica. */
-        async function showNewsDetailPage(newsId) {
-            // Se asume que db ya está inicializado.
-            if (!db || !userId) {
-                console.error("Base de datos no disponible.");
-                return;
-            }
-
-            newsListContainer.classList.add('hidden');
-            newsDetailContainer.classList.remove('hidden');
-            newsDetailContainer.innerHTML = `
-                <div class="flex justify-center items-center h-48 bg-white p-6 rounded-lg shadow-md">
-                    <p class="text-xl text-gray-500">Cargando noticia...</p>
-                </div>
+        
+        // ------------------------------------------------------------------
+        // E. FUNCIÓN PARA OBTENER EL ANUNCIO ROTATIVO
+        // ------------------------------------------------------------------
+        function getRandomSponsoredLink() {
+            const index = Math.floor(Math.random() * SPONSORED_LINKS.length);
+            const ad = SPONSORED_LINKS[index];
+            return `
+                <p class="text-xl font-extrabold text-gray-900 mb-2">✨ ANUNCIO PATROCINADO ✨</p>
+                <a href="${ad.url}" target="_blank" rel="noopener noreferrer" class="font-bold hover:text-orange-700 transition">
+                    ${ad.title}
+                </a>
+                <p class="text-sm text-gray-600 mt-1">Visítanos en ${ad.url.replace(/(^\w+:|^)\/\//, '').replace('www.', '')}</p>
             `;
+        }
 
-            try {
-                // Ruta para las colecciones de Firestore
-                const newsRef = doc(db, `artifacts/${appId}/users/${userId}/noticias`, newsId);
-                const docSnap = await getDoc(newsRef); 
+        // ------------------------------------------------------------------
+        // F. FUNCIÓN PARA COMPARTIR LA NOTICIA
+        // ------------------------------------------------------------------
+        async function shareNews(title, text, url) {
+            
+            if (navigator.share) {
+                // Si la Web Share API está disponible (móvil o desktop compatible)
+                try {
+                    await navigator.share({
+                        title: title,
+                        text: text,
+                        url: url 
+                    });
+                    console.log('Contenido compartido con éxito');
+                } catch (error) {
+                    // El usuario canceló o hubo un error
+                    console.error('Error al compartir o usuario canceló:', error);
+                }
+            } else {
+                // Fallback para navegadores sin soporte (ej. Desktop)
+                const shareText = `¡Mira esta noticia! ${title}: ${url}`;
+                try {
+                    const el = document.createElement('textarea');
+                    el.value = shareText;
+                    document.body.appendChild(el);
+                    el.select();
+                    document.execCommand('copy');
+                    document.body.removeChild(el);
+                    alert('Enlace copiado al portapapeles. Compártelo: ' + shareText);
+                } catch (err) {
+                    console.error('No se pudo copiar el texto al portapapeles', err);
+                    alert('Tu navegador no soporta la función de compartir/copiar directamente.');
+                }
+            }
+        }
+        window.shareNews = shareNews; // Hacer la función accesible globalmente
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    newsDetailContainer.innerHTML = `
-                        <div class="p-4 sm:p-6 bg-white rounded-xl shadow-xl border-t-4 border-emerald-500">
+        // Usamos una función simple para simular una alerta sin usar window.alert
+        function alert(message) {
+            const container = document.getElementById('newsDetailContainer') || document.body;
+            const alertBox = document.createElement('div');
+            alertBox.className = 'fixed top-4 left-1/2 transform -translate-x-1/2 bg-emerald-500 text-white p-3 rounded-lg shadow-lg z-50 transition-opacity duration-300';
+            alertBox.textContent = message;
+            container.appendChild(alertBox);
+            setTimeout(() => {
+                alertBox.style.opacity = '0';
+                setTimeout(() => container.removeChild(alertBox), 300);
+            }, 3000);
+        }
+
+        // ------------------------------------------------------------------
+        // A. FUNCIÓN PARA VOLVER A LA LISTA PRINCIPAL
+        // ------------------------------------------------------------------
+        function showNewsList() {
+            newsListContainer.style.display = 'block'; 
+            newsDetailContainer.style.display = 'none'; 
+            newsDetailContainer.innerHTML = ''; 
+            
+            // 1. Limpiar el hash de la URL
+            history.pushState(null, null, window.location.pathname + window.location.search);
+            
+            // 2. Restaurar las Meta Etiquetas OG a los valores genéricos
+            pageTitle.textContent = DEFAULT_TITLE;
+            ogTitle.setAttribute('content', DEFAULT_OG_TITLE);
+            ogDescription.setAttribute('content', DEFAULT_OG_DESCRIPTION);
+            ogImage.setAttribute('content', DEFAULT_OG_IMAGE);
+            ogUrl.setAttribute('content', window.location.href.split('#')[0]);
+            
+            // 3. Mostrar el banner premium en la lista
+            if (PREMIUM_AD.active) {
+                premiumBanner.style.display = 'flex';
+                premiumBanner.innerHTML = `
+                    <a href="${PREMIUM_AD.link}" target="_blank" rel="noopener noreferrer" onclick="console.log('Premium Ad Clicked')">
+                        <img src="${PREMIUM_AD.imagenUrl}" alt="${PREMIUM_AD.altText}" class="rounded-lg" onerror="this.onerror=null; this.src='https://placehold.co/728x90/e0f2f1/16a34a?text=Publicidad+Premium';">
+                    </a>
+                `;
+            } else {
+                premiumBanner.style.display = 'none';
+            }
+        }
+        window.showNewsList = showNewsList; // Hacer la función accesible globalmente
+
+        // ------------------------------------------------------------------
+        // B. FUNCIÓN PARA IR AL DETALLE Y CARGAR EL CONTENIDO COMPLETO
+        // ------------------------------------------------------------------
+        function showNewsDetailPage(newsId) {
+            
+            // 1. Ocultar el banner premium
+            premiumBanner.style.display = 'none';
+
+            // 2. Mostrar el detalle y ocultar la lista
+            newsListContainer.style.display = 'none';
+            newsDetailContainer.style.display = 'block';
+            
+            // 3. Buscar la noticia
+            const data = LOCAL_NEWS_DATA.find(news => news.id === newsId);
+            
+            if (data) {
+                // 4. Actualizar la URL para que el enlace sea compartible
+                history.pushState(null, null, `#${newsId}`);
+                const newsUrl = window.location.href.split('#')[0] + `#${data.id}`;
+
+                // 5. *** ACTUALIZAR LAS META ETIQUETAS Y TÍTULO DE LA PÁGINA ***
+                pageTitle.textContent = `${data.titulo} | México se Entere`;
+                ogTitle.setAttribute('content', data.titulo);
+                ogDescription.setAttribute('content', data.resumen.substring(0, 150) + '...');
+                ogImage.setAttribute('content', data.imagenUrl);
+                ogUrl.setAttribute('content', newsUrl); // Es CRUCIAL que esta sea la URL con el hash
+
+                // Función para obtener la etiqueta de municipio
+                const getMunicipioTag = (category) => {
+                    const map = {
+                        'atizapan': 'Atizapán',
+                        'tlalnepantla': 'Tlalnepantla',
+                        'naucalpan': 'Naucalpan',
+                        'cuatitlan izcallí': 'Izcalli',
+                        'nicolas romero': 'Nicolás Romero',
+                        'méxico': 'Nacional' 
+                    };
+                    return map[category.toLowerCase()] || 'Edomex';
+                };
+                const municipioTag = getMunicipioTag(data.categoria);
+
+                // Obtener el anuncio rotativo (Paquete A)
+                const adContent = getRandomSponsoredLink();
+                
+                // 6. Renderizar la noticia COMPLETA
+                newsDetailContainer.innerHTML = `
+                    <div class="p-4 sm:p-8 bg-white rounded-xl shadow-2xl">
+                        <!-- Contenedor de Botones (Volver y Compartir) -->
+                        <div class="flex justify-between items-center mb-6">
                             <!-- Botón Volver -->
-                            <button onclick="window.showNewsList()" class="mb-6 text-emerald-600 hover:text-emerald-800 font-semibold flex items-center transition duration-150">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <button onclick="showNewsList()" class="text-emerald-600 hover:text-emerald-800 font-semibold flex items-center transition duration-200 text-lg">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
                                 </svg>
-                                Volver a la lista
+                                Volver
                             </button>
                             
-                            <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-800 mb-6">${data.titulo || 'Noticia sin Título'}</h1>
-                            
-                            <!-- Imagen -->
-                            <img src="${data.imagenUrl || 'https://placehold.co/800x400/94A3B8/FFFFFF?text=Sin+Imagen'}" 
-                                 alt="${data.titulo}" 
-                                 class="w-full h-auto object-cover rounded-lg mb-6 shadow-md border border-gray-100"
-                                 onerror="this.onerror=null; this.src='https://placehold.co/800x400/94A3B8/FFFFFF?text=Error+Carga';">
-                            
-                            <!-- Resumen/Lead -->
-                            <p class="text-xl font-medium text-gray-600 mb-8 border-l-4 border-emerald-400 pl-4">${data.resumen || 'Sin resumen.'}</p>
-                            
-                            <!-- CONTENIDO COMPLETO -->
-                            <div class="text-gray-800 leading-relaxed text-lg full-content">
-                                ${data.contenidoCompleto || 'El contenido completo de esta noticia no fue cargado.'}
-                            </div>
-                            
-                            <p class="text-sm text-gray-400 mt-8 text-right">Publicado: ${new Date(data.fecha).toLocaleDateString()}</p>
+                            <!-- Botón Compartir -->
+                            <button onclick="shareNews('${data.titulo.replace(/'/g, "\\'")}', '${data.resumen.substring(0, 100).replace(/'/g, "\\'")}...', '${newsUrl}')" 
+                                    class="bg-emerald-500 text-white py-2 px-4 rounded-full font-bold text-sm shadow-md hover:bg-emerald-700 transition duration-200 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                                    <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.314l4.94 2.47a3 3 0 10.832-1.664l-4.94-2.47a3.001 3.001 0 000-1.036l4.94-2.47A3 3 0 0015 8z" />
+                                </svg>
+                                Compartir
+                            </button>
                         </div>
-                    `;
-                    
-                } else {
-                    newsDetailContainer.innerHTML = `<p class="text-center text-red-500 mt-12">Error: Noticia con ID ${newsId} no encontrada.</p>`;
-                }
-            } catch (error) {
-                console.error("Error al cargar la noticia completa:", error);
-                newsDetailContainer.innerHTML = `<p class="text-center text-red-500 mt-12">Error de conexión: ${error.message}</p>`;
-            }
-        }
-        
-        // Hacemos las funciones accesibles globalmente para el 'onclick' del HTML
-        window.showNewsList = showNewsList; 
-        window.showNewsDetailPage = showNewsDetailPage; 
-
-        // -----------------------------------------------------------
-        // LÓGICA DE FIREBASE FIRETSORE (LISTADO EN TIEMPO REAL)
-        // -----------------------------------------------------------
-
-        function listenForNews() {
-            if (!db || !userId) return;
-
-            const newsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/noticias`);
-            const q = query(newsCollectionRef); 
-            
-            loadingStatusEl.textContent = 'Conectando a la base de datos...';
-            
-            onSnapshot(q, (querySnapshot) => {
-                const newsItems = [];
-                querySnapshot.forEach((doc) => {
-                    newsItems.push({ id: doc.id, ...doc.data() });
-                });
-
-                // Ordenar por fecha (descendente) en JS
-                newsItems.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-
-                renderNews(newsItems);
-
-            }, (error) => {
-                console.error("Error al escuchar noticias:", error);
-                loadingStatusEl.textContent = `❌ Error de conexión en tiempo real: ${error.message}`;
-            });
-        }
-        
-        // -----------------------------------------------------------
-        // RENDERIZADO DE NOTICIAS
-        // -----------------------------------------------------------
-
-        function renderNews(items) {
-            newsListDiv.innerHTML = ''; 
-            loadingStatusEl.classList.add('hidden'); 
-
-            if (items.length === 0) {
-                loadingStatusEl.classList.remove('hidden');
-                loadingStatusEl.textContent = 'Aún no hay noticias publicadas. Utiliza el enlace de Administración para subir contenido.';
-                return;
-            }
-
-            items.forEach(data => {
-                const imageUrl = data.imagenUrl || 'https://placehold.co/400x200/94A3B8/FFFFFF?text=Sin+Imagen';
-
-                const newsCard = `
-                    <div id="news-${data.id}" 
-                         class="card bg-white p-5 rounded-lg shadow-lg border border-gray-100 cursor-pointer" 
-                         onclick="window.showNewsDetailPage('${data.id}')">
                         
-                        <img src="${imageUrl}" 
-                             alt="${data.titulo || 'Noticia'}" 
-                             class="w-full h-40 object-cover rounded-md mb-4"
-                             onerror="this.onerror=null; this.src='https://placehold.co/400x200/EF4444/FFFFFF?text=Error+Carga';">
+                        <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-4">${municipioTag}</span>
+
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-gray-900 mb-6 leading-tight">${data.titulo}</h1>
                         
-                        <h3 class="font-bold text-xl text-gray-800 line-clamp-2">${data.titulo || 'Sin Título'}</h3>
-                        <p class="text-gray-600 text-sm mt-2 line-clamp-3">${data.resumen || 'Sin resumen disponible.'}</p>
+                        <!-- Imagen de la Noticia -->
+                        <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-auto max-h-96 object-cover rounded-xl mb-8 shadow-lg border border-gray-200">
                         
-                        <div class="mt-3 flex justify-between items-center text-xs">
-                            <p class="text-emerald-500 font-medium hover:text-emerald-700">Leer más →</p>
-                            <p class="text-gray-400">${new Date(data.fecha).toLocaleDateString()}</p>
+                        <!-- Resumen/Bajada -->
+                        <p class="text-xl font-semibold text-gray-600 mb-8 border-l-4 border-emerald-500 pl-4 italic">${data.resumen}</p>
+                        
+                        <!-- ESPACIO DEL ANUNCIO ROTATIVO (Paquete A) -->
+                        <div class="ad-placeholder">
+                            ${adContent}
                         </div>
+
+                        <!-- EL CONTENIDO COMPLETO APARECE AQUÍ -->
+                        <div class="text-gray-800 leading-relaxed text-lg space-y-4">
+                            ${data.resumen.split('\n').map(p => `<p>${p}</p>`).join('')}
+                        </div>
+
+                        <hr class="my-8 border-gray-200">
+                        <p class="text-sm text-gray-500 text-right">Publicado: ${new Date(data.fecha).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
                     </div>
                 `;
-                newsListDiv.innerHTML += newsCard;
+                
+            } else {
+                // Noticia no encontrada
+                newsDetailContainer.innerHTML = `<p class="text-center text-red-500 mt-12">Error: Noticia no encontrada.</p>`;
+                // Restaurar las OG tags por si acaso.
+                showNewsList();
+            }
+        }
+        window.showNewsDetailPage = showNewsDetailPage;
+
+        // ------------------------------------------------------------------
+        // C. FUNCIÓN DE CARGA DE NOTICIAS Y LÓGICA DE INICIO
+        // ------------------------------------------------------------------
+        function fetchNews() {
+            if (LOCAL_NEWS_DATA.length === 0) {
+                newsListDiv.innerHTML = '<p class="col-span-full text-center text-gray-400 py-10">No hay noticias cargadas. ¡Añade tu primera nota!</p>';
+                showNewsList();
+                return;
+            }
+            
+            newsListDiv.innerHTML = ''; 
+            
+            LOCAL_NEWS_DATA.sort((a, b) => b.fecha - a.fecha).forEach(data => {
+                
+                // Función para obtener la etiqueta de municipio
+                const getMunicipioTag = (category) => {
+                    const map = {
+                        'atizapan': 'Atizapán',
+                        'tlalnepantla': 'Tlalnepantla',
+                        'naucalpan': 'Naucalpan',
+                        'cuatitlan izcallí': 'Izcalli',
+                        'nicolas romero': 'Nicolás Romero',
+                        'méxico': 'Nacional'
+                    };
+                    return map[category.toLowerCase()] || 'Edomex';
+                };
+
+                const municipioTag = getMunicipioTag(data.categoria);
+
+                // Creamos la tarjeta (elemento DIV)
+                const newsItem = document.createElement('div');
+                newsItem.className = 'bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition cursor-pointer transform hover:scale-[1.01]';
+                
+                // AÑADIMOS EL EVENTO ONCLICK
+                newsItem.onclick = () => {
+                    showNewsDetailPage(data.id); 
+                };
+
+                // Contenido visual de la tarjeta
+                newsItem.innerHTML = `
+                    <img src="${data.imagenUrl}" alt="${data.titulo}" class="w-full h-40 object-cover rounded-lg mb-4 shadow-sm">
+                    <span class="inline-block bg-emerald-100 text-emerald-700 text-xs font-semibold px-3 py-1 rounded-full uppercase mb-2">${municipioTag}</span>
+                    <h3 class="font-bold text-xl text-gray-900 mb-2">${data.titulo}</h3>
+                    <p class="text-gray-600 text-sm line-clamp-2">${data.resumen}</p>
+                    <p class="mt-3 text-emerald-600 text-sm font-medium">Leer Noticia Completa</p>
+                `;
+                
+                newsListDiv.appendChild(newsItem);
+            });
+            
+            // Lógica de Vista Inicial (Mostrar Detalle o Lista)
+            const newsIdFromHash = window.location.hash.substring(1);
+            const newsToLoad = LOCAL_NEWS_DATA.find(news => news.id === newsIdFromHash);
+
+            if (newsToLoad) {
+                // Si hay un hash válido (ej. al entrar por un enlace compartido),
+                // cargamos directamente el detalle de la noticia.
+                showNewsDetailPage(newsIdFromHash);
+            } else {
+                // Si no hay hash, mostramos la lista principal y restauramos OG tags.
+                showNewsList(); 
+            }
+        }
+
+        // ------------------------------------------------------------------
+        // D. LÓGICA DEL SERVICE WORKER (PWA)
+        // ------------------------------------------------------------------
+        // Registra el Service Worker (necesario para la PWA)
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                // Asegúrate de usar la ruta correcta del Service Worker
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registrado con éxito en:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.error('Fallo el registro del ServiceWorker:', error);
+                    });
             });
         }
-        
-        // -----------------------------------------------------------
-        // REGISTRO DEL SERVICE WORKER (PWA)
-        // -----------------------------------------------------------
 
-        function registerServiceWorker() {
-            if ('serviceWorker' in navigator) {
-                // Retraso para evitar InvalidStateError
-                setTimeout(() => {
-                    navigator.serviceWorker.register('/service-worker.js')
-                        .then(reg => console.log('✅ Service Worker registrado con éxito:', reg.scope))
-                        .catch(error => console.error('❌ Fallo el registro del Service Worker:', error));
-                }, 100); 
-            } else {
-                console.warn('⚠️ Este navegador no soporta Service Workers (PWA).');
-            }
-        }
-        
-        // -----------------------------------------------------------
-        // PUNTO DE ENTRADA PRINCIPAL
-        // -----------------------------------------------------------
-        document.addEventListener('DOMContentLoaded', () => {
-            // 1. Iniciar Firebase y la autenticación
-            if (initializeFirebase()) {
-                setupAuthentication();
-            }
-            // 2. Registrar el service worker 
-            registerServiceWorker(); 
+        // Lógica para el botón de instalación (Solo visible en navegadores compatibles)
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            installAppButton.style.display = 'block';
+
+            installAppButton.addEventListener('click', () => {
+                installAppButton.style.display = 'none';
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuario aceptó la instalación de la PWA');
+                    } else {
+                        console.log('Usuario rechazó la instalación de la PWA');
+                    }
+                    deferredPrompt = null;
+                });
+            });
         });
 
+
+        // Iniciar la aplicación al cargar la ventana
+        window.onload = fetchNews;
     </script>
 </body>
 </html>
