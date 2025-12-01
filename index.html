@@ -80,20 +80,20 @@
         setLogLevel('debug'); 
 
         // -----------------------------------------------------------
-        // CONFIGURACIÓN GLOBAL (Ahora hardcodeada para evitar errores de entorno)
+        // CONFIGURACIÓN GLOBAL (Configuración forzada y optimizada)
         // -----------------------------------------------------------
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
         
-        // **INYECCIÓN DIRECTA DE LA CONFIGURACIÓN CORRECTA**
+        // **CONFIGURACIÓN DIRECTA DE FIREBASE SIN CAMPOS OPCIONALES**
         const firebaseConfig = {
             apiKey: "AIzaSyBPbCmeaCd6sYJoO_9JqEWzWievDw_fFwc",
             authDomain: "noticiaspwa-58270.firebaseapp.com",
-            projectId: "noticiaspwa-58270", // ¡CLAVE PARA RESOLVER EL ERROR!
+            projectId: "noticiaspwa-58270", 
             storageBucket: "noticiaspwa-58270.firebasestorage.app",
             messagingSenderId: "758477934480",
-            appId: "1:758477934480:web:10f781e64eff91b21a2d15",
-            measurementId: "G-1628F4TR27"
+            appId: "1:758477934480:web:10f781e64eff91b21a2d15"
+            // measurementId ha sido eliminado.
         };
         
         let app;
@@ -114,7 +114,6 @@
         // -----------------------------------------------------------
         function initializeFirebase() {
             try {
-                // Ya no leemos de __firebase_config, usamos el objeto hardcodeado.
                 
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
@@ -122,8 +121,9 @@
                 return true;
 
             } catch (error) {
+                // El error de "Configuración de Firebase incompleta" se captura aquí.
                 console.error("CRÍTICO: Error al inicializar Firebase:", error.message);
-                loadingStatusEl.textContent = `❌ Error de inicio de Firebase: ${error.message}. Por favor, verifique la configuración.`;
+                loadingStatusEl.textContent = `❌ Error de inicio de Firebase: ${error.message}. ¡Verifica tu ID de proyecto!`;
                 return false;
             }
         }
@@ -237,7 +237,6 @@
         function listenForNews() {
             if (!db || !userId) return;
 
-            // Ruta para las colecciones de Firestore
             const newsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/noticias`);
             const q = query(newsCollectionRef); 
             

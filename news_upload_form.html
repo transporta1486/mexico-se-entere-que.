@@ -1,267 +1,281 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administración de Noticias - Subir</title>
-    <!-- Carga Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f7f9fb;
-        }
-        .form-input {
-            padding: 0.75rem;
-            border: 1px solid #d1d5db;
-            border-radius: 0.5rem;
-            width: 100%;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        .form-input:focus {
-            border-color: #059669; /* emerald-600 */
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
-            outline: none;
-        }
-        textarea.form-input {
-            min-height: 200px;
-            resize: vertical;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de Noticias - Subir</title>
+    <!-- Carga Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f7f9fb;
+        }
+        .form-input {
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.5rem;
+            width: 100%;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .form-input:focus {
+            border-color: #059669; /* emerald-600 */
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2);
+            outline: none;
+        }
+        textarea.form-input {
+            min-height: 200px;
+            resize: vertical;
+        }
+    </style>
 </head>
 <body class="min-h-screen p-4 sm:p-8">
 
-    <div class="max-w-4xl mx-auto">
-        <header class="text-center mb-8 bg-white p-6 rounded-xl shadow-md border-t-4 border-emerald-500">
-            <h1 class="text-3xl font-bold text-emerald-700">Administración de Noticias</h1>
-            <p class="text-md text-gray-600 mt-2">Publicar nueva noticia en el portal.</p>
-            
-            <!-- Enlace para volver a la lista principal -->
-            <a href="index.html" class="inline-block mt-4 text-sm font-semibold text-emerald-500 hover:text-emerald-600 transition duration-200">
-                ← Volver al Listado Principal
-            </a>
-            <p class="text-xs text-gray-400 mt-3">ID de Usuario: <span id="userIdDisplay" class="font-mono bg-gray-100 px-1 rounded">Cargando...</span></p>
-        </header>
+    <div class="max-w-4xl mx-auto">
+        <header class="text-center mb-8 bg-white p-6 rounded-xl shadow-md border-t-4 border-emerald-500">
+            <h1 class="text-3xl font-bold text-emerald-700">Administración de Noticias</h1>
+            <p class="text-md text-gray-600 mt-2">Publicar nueva noticia en el portal.</p>
+            
+            <!-- Enlace para volver a la lista principal (asumiendo que index.html es la lista) -->
+            <a href="index.html" class="inline-block mt-4 text-sm font-semibold text-emerald-500 hover:text-emerald-600 transition duration-200">
+                ← Volver al Listado Principal
+            </a>
+            <p class="text-xs text-gray-400 mt-3">ID de Usuario: <span id="userIdDisplay" class="font-mono bg-gray-100 px-1 rounded">Cargando...</span></p>
+        </header>
 
-        <main class="bg-white p-6 sm:p-8 rounded-xl shadow-xl">
-            <form id="newsForm">
-                <div class="space-y-6">
-                    
-                    <!-- Título -->
-                    <div>
-                        <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título de la Noticia (Máx 100 caracteres)</label>
-                        <input type="text" id="titulo" name="titulo" maxlength="100" required class="form-input">
-                    </div>
+        <main class="bg-white p-6 sm:p-8 rounded-xl shadow-xl">
+            <form id="newsForm">
+                <div class="space-y-6">
+                    
+                    <!-- Título -->
+                    <div>
+                        <label for="titulo" class="block text-sm font-medium text-gray-700 mb-1">Título de la Noticia (Máx 100 caracteres)</label>
+                        <input type="text" id="titulo" name="titulo" maxlength="100" required class="form-input">
+                    </div>
 
-                    <!-- Resumen -->
-                    <div>
-                        <label for="resumen" class="block text-sm font-medium text-gray-700 mb-1">Resumen / Lead (Breve introducción)</label>
-                        <textarea id="resumen" name="resumen" required class="form-input"></textarea>
-                    </div>
+                    <!-- Resumen -->
+                    <div>
+                        <label for="resumen" class="block text-sm font-medium text-gray-700 mb-1">Resumen / Lead (Breve introducción)</label>
+                        <textarea id="resumen" name="resumen" required class="form-input"></textarea>
+                    </div>
 
-                    <!-- URL de Imagen -->
-                    <div>
-                        <label for="imagenUrl" class="block text-sm font-medium text-gray-700 mb-1">URL de la Imagen (Link directo)</label>
-                        <input type="url" id="imagenUrl" name="imagenUrl" class="form-input" placeholder="Ej: https://ejemplo.com/imagen.jpg">
-                    </div>
+                    <!-- URL de Imagen -->
+                    <div>
+                        <label for="imagenUrl" class="block text-sm font-medium text-gray-700 mb-1">URL de la Imagen (Link directo)</label>
+                        <input type="url" id="imagenUrl" name="imagenUrl" class="form-input" placeholder="Ej: https://ejemplo.com/imagen.jpg">
+                    </div>
 
-                    <!-- Contenido Completo -->
-                    <div>
-                        <label for="contenidoCompleto" class="block text-sm font-medium text-gray-700 mb-1">Contenido Completo de la Noticia</label>
-                        <textarea id="contenidoCompleto" name="contenidoCompleto" required class="form-input"></textarea>
-                    </div>
+                    <!-- Contenido Completo -->
+                    <div>
+                        <label for="contenidoCompleto" class="block text-sm font-medium text-gray-700 mb-1">Contenido Completo de la Noticia</label>
+                        <textarea id="contenidoCompleto" name="contenidoCompleto" required class="form-input"></textarea>
+                    </div>
 
-                    <!-- Botón de Envío -->
-                    <button type="submit" id="submitBtn" 
-                            class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition duration-200 shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
-                        Publicar Noticia
-                    </button>
-                    
-                    <!-- Mensaje de Estado -->
-                    <p id="statusMessage" class="text-center mt-4 text-sm font-medium hidden"></p>
-                </div>
-            </form>
-        </main>
-    </div>
+                    <!-- Botón de Envío -->
+                    <button type="submit" id="submitBtn" 
+                            class="w-full bg-emerald-600 text-white font-bold py-3 px-4 rounded-lg hover:bg-emerald-700 transition duration-200 shadow-lg disabled:bg-gray-400 disabled:cursor-not-allowed">
+                        Publicar Noticia
+                    </button>
+                    
+                    <!-- Mensaje de Estado -->
+                    <p id="statusMessage" class="text-center mt-4 text-sm font-medium hidden"></p>
+                </div>
+            </form>
+        </main>
+    </div>
 
-    <script type="module">
-        // Importaciones de Firebase
-        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { 
-            getAuth, 
-            signInAnonymously, 
-            signInWithCustomToken, 
-            onAuthStateChanged 
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { 
-            getFirestore, 
-            collection, 
-            addDoc,
-            serverTimestamp // Importado para la marca de tiempo
-        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        // Habilitar logs de debug de Firebase
-        setLogLevel('debug'); 
+    <script type="module">
+        // Importaciones de Firebase
+        import { initializeApp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { 
+            getAuth, 
+            signInAnonymously, 
+            signInWithCustomToken, 
+            onAuthStateChanged 
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { 
+            getFirestore, 
+            collection, 
+            addDoc,
+            serverTimestamp
+        } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        
+        // Habilitar logs de debug de Firebase
+        setLogLevel('debug'); 
 
-        // -----------------------------------------------------------
-        // CONFIGURACIÓN GLOBAL (Variables proporcionadas por el entorno)
-        // -----------------------------------------------------------
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-        
-        let app;
-        let auth;
-        let db;
-        let userId = null;
-        let isAuthReady = false; // Bandera para saber si la autenticación está lista
-        
-        // Elementos DOM
-        const form = document.getElementById('newsForm');
-        const submitBtn = document.getElementById('submitBtn');
-        const statusMessage = document.getElementById('statusMessage');
-        const userIdDisplay = document.getElementById('userIdDisplay');
+        // -----------------------------------------------------------
+        // CONFIGURACIÓN GLOBAL (Usando variables de entorno obligatorias)
+        // -----------------------------------------------------------
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // ** CORRECCIÓN: Usar la configuración global __firebase_config **
+        let firebaseConfig = {};
+        try {
+            firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+            if (!firebaseConfig || !firebaseConfig.projectId) {
+                throw new Error("La configuración de Firebase está vacía o es inválida.");
+            }
+        } catch (e) {
+            console.error("Error al parsear __firebase_config:", e);
+            // Si falla, usamos un objeto vacío y la inicialización fallará, lo cual es manejado
+        }
 
 
-        // -----------------------------------------------------------
-        // INICIALIZACIÓN DE FIREBASE Y AUTH
-        // -----------------------------------------------------------
+        let app;
+        let auth;
+        let db;
+        let userId = null;
+        let isAuthReady = false; // Bandera para saber si la autenticación está lista
+        
+        // Elementos DOM
+        const form = document.getElementById('newsForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        const userIdDisplay = document.getElementById('userIdDisplay');
 
-        function initializeFirebase() {
-            try {
-                const firebaseConfigString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-                const firebaseConfig = JSON.parse(firebaseConfigString);
 
-                if (!firebaseConfig || !firebaseConfig.projectId) {
-                    throw new Error('Configuración de Firebase incompleta.');
-                }
+        // -----------------------------------------------------------
+        // INICIALIZACIÓN DE FIREBASE Y AUTH
+        // -----------------------------------------------------------
 
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app); 
-                return true;
+        function initializeFirebase() {
+            try {
+                
+                if (!firebaseConfig || !firebaseConfig.projectId) {
+                    throw new Error('Configuración de Firebase incompleta.');
+                }
 
-            } catch (error) {
-                console.error("CRÍTICO: Error al inicializar Firebase:", error.message);
-                updateStatus(`❌ Error de inicio: ${error.message}`, 'text-red-600');
-                return false;
-            }
-        }
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app); 
+                return true;
 
-        async function setupAuthentication() {
-            try {
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
+            } catch (error) {
+                console.error("CRÍTICO: Error al inicializar Firebase:", error.message);
+                updateStatus(`❌ Error de inicio: ${error.message}`, 'text-red-600');
+                return false;
+            }
+        }
 
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        userId = user.uid;
-                        userIdDisplay.textContent = user.uid;
-                        isAuthReady = true;
-                        submitBtn.disabled = false;
-                        updateStatus('Listo para publicar.', 'text-green-600', true);
-                    } else {
-                        userIdDisplay.textContent = 'Anónimo';
-                        isAuthReady = false;
-                        submitBtn.disabled = true;
-                        updateStatus('Autenticando...', 'text-gray-500');
-                    }
-                });
+        async function setupAuthentication() {
+            try {
+                // El listener de onAuthStateChanged se encarga de todo, 
+                // pero primero intentamos iniciar sesión para activar el listener.
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = user.uid;
+                        isAuthReady = true;
+                        submitBtn.disabled = false;
+                        updateStatus('Listo para publicar.', 'text-green-600', true);
+                    } else {
+                        userIdDisplay.textContent = 'Anónimo';
+                        isAuthReady = false;
+                        submitBtn.disabled = true;
+                        updateStatus('Autenticando...', 'text-gray-500');
+                    }
+                });
+                
+                // Autenticación inicial
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
 
-            } catch (error) {
-                console.error("CRÍTICO: Error en la autenticación:", error);
-                updateStatus(`❌ Error de autenticación: ${error.message}`, 'text-red-600');
-            }
-        }
+            } catch (error) {
+                console.error("CRÍTICO: Error en la autenticación:", error);
+                updateStatus(`❌ Error de autenticación: ${error.message}`, 'text-red-600');
+            }
+        }
 
-        // -----------------------------------------------------------
-        // LÓGICA DE FIREBASE FIRETSORE (SUBIR NOTICIA)
-        // -----------------------------------------------------------
+        // -----------------------------------------------------------
+        // LÓGICA DE FIREBASE FIRETSORE (SUBIR NOTICIA)
+        // -----------------------------------------------------------
 
-        /**
-         * Actualiza el mensaje de estado en la interfaz.
-         * @param {string} message - Mensaje a mostrar.
-         * @param {string} colorClass - Clase de color de Tailwind.
-         * @param {boolean} hide - Si debe ocultarse después de un tiempo.
-         */
-        function updateStatus(message, colorClass, hide = false) {
-            statusMessage.textContent = message;
-            statusMessage.className = `text-center mt-4 text-sm font-medium ${colorClass}`;
-            statusMessage.classList.remove('hidden');
-            
-            if (hide) {
-                setTimeout(() => {
-                    statusMessage.classList.add('hidden');
-                }, 5000);
-            }
-        }
+        /**
+         * Actualiza el mensaje de estado en la interfaz.
+         * @param {string} message - Mensaje a mostrar.
+         * @param {string} colorClass - Clase de color de Tailwind.
+         * @param {boolean} hide - Si debe ocultarse después de un tiempo.
+         */
+        function updateStatus(message, colorClass, hide = false) {
+            statusMessage.textContent = message;
+            statusMessage.className = `text-center mt-4 text-sm font-medium ${colorClass}`;
+            statusMessage.classList.remove('hidden');
+            
+            if (hide) {
+                setTimeout(() => {
+                    statusMessage.classList.add('hidden');
+                }, 5000);
+            }
+        }
 
-        /**
-         * Maneja el envío del formulario para guardar la noticia en Firestore.
-         * @param {Event} e - Evento de envío del formulario.
-         */
-        async function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            if (!isAuthReady || !userId) {
-                updateStatus('Espera, la autenticación aún no está lista.', 'text-yellow-600');
-                return;
-            }
-            
-            submitBtn.disabled = true;
-            updateStatus('Guardando noticia en Firestore...', 'text-blue-600');
+        /**
+         * Maneja el envío del formulario para guardar la noticia en Firestore.
+         * @param {Event} e - Evento de envío del formulario.
+         */
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            if (!isAuthReady || !userId) {
+                updateStatus('Espera, la autenticación aún no está lista.', 'text-yellow-600');
+                return;
+            }
+            
+            submitBtn.disabled = true;
+            updateStatus('Guardando noticia en Firestore...', 'text-blue-600');
 
-            // 1. Recolectar datos del formulario
-            const formData = new FormData(form);
-            const newsData = {
-                titulo: formData.get('titulo'),
-                resumen: formData.get('resumen'),
-                imagenUrl: formData.get('imagenUrl') || null, // Acepta valor nulo
-                contenidoCompleto: formData.get('contenidoCompleto'),
-                fecha: new Date().toISOString(), // Usar ISO string para que sea fácil de ordenar
-                // Usar serverTimestamp para una marca de tiempo oficial del servidor
-                timestamp: serverTimestamp() 
-            };
+            // 1. Recolectar datos del formulario
+            const formData = new FormData(form);
+            const newsData = {
+                titulo: formData.get('titulo'),
+                resumen: formData.get('resumen'),
+                imagenUrl: formData.get('imagenUrl') || null, // Acepta valor nulo
+                contenidoCompleto: formData.get('contenidoCompleto'),
+                // Usar serverTimestamp para una marca de tiempo oficial del servidor
+                timestamp: serverTimestamp() 
+            };
 
-            // 2. Definir la ruta de la colección privada (ruta por defecto de Canvas)
-            const collectionPath = `artifacts/${appId}/users/${userId}/noticias`;
-            const newsCollectionRef = collection(db, collectionPath);
-            
-            try {
-                // 3. Agregar el documento a la colección
-                const docRef = await addDoc(newsCollectionRef, newsData);
-                
-                updateStatus(`✅ Noticia publicada con éxito. ID: ${docRef.id}`, 'text-green-600', true);
-                form.reset(); // Limpiar el formulario
-                submitBtn.disabled = false;
+            // 2. Definir la ruta de la colección privada (ruta por defecto de Canvas)
+            // Colección: /artifacts/{appId}/users/{userId}/noticias
+            const collectionPath = `artifacts/${appId}/users/${userId}/noticias`;
+            const newsCollectionRef = collection(db, collectionPath);
+            
+            try {
+                // 3. Agregar el documento a la colección
+                const docRef = await addDoc(newsCollectionRef, newsData);
+                
+                updateStatus(`✅ Noticia publicada con éxito. ID: ${docRef.id}`, 'text-green-600', true);
+                form.reset(); // Limpiar el formulario
+                submitBtn.disabled = false;
 
-            } catch (error) {
-                console.error("Error al guardar la noticia:", error);
-                updateStatus(`❌ Error al publicar: ${error.message}`, 'text-red-600');
-                submitBtn.disabled = false;
-            }
-        }
+            } catch (error) {
+                console.error("Error al guardar la noticia:", error);
+                updateStatus(`❌ Error al publicar: ${error.message}`, 'text-red-600');
+                submitBtn.disabled = false;
+            }
+        }
 
-        // -----------------------------------------------------------
-        // PUNTO DE ENTRADA PRINCIPAL
-        // -----------------------------------------------------------
-        document.addEventListener('DOMContentLoaded', () => {
-            // Deshabilitar botón hasta que la autenticación esté lista
-            submitBtn.disabled = true;
-            updateStatus('Inicializando Firebase y autenticación...', 'text-gray-500');
+        // -----------------------------------------------------------
+        // PUNTO DE ENTRADA PRINCIPAL
+        // -----------------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            // Deshabilitar botón hasta que la autenticación esté lista
+            submitBtn.disabled = true;
+            updateStatus('Inicializando Firebase y autenticación...', 'text-gray-500');
 
-            // Iniciar Firebase y la autenticación
-            if (initializeFirebase()) {
-                setupAuthentication();
-            }
+            // Iniciar Firebase y la autenticación
+            if (initializeFirebase()) {
+                setupAuthentication();
+            }
 
-            // Asignar el manejador de eventos al formulario
-            form.addEventListener('submit', handleFormSubmit);
-        });
+            // Asignar el manejador de eventos al formulario
+            form.addEventListener('submit', handleFormSubmit);
+        });
 
-    </script>
+    </script>
 </body>
 </html>
