@@ -6,6 +6,7 @@ const urlsToCache = [
   '/', // El index.html si acceden a la raíz
   '/index.html',
   '/manifest.json',
+  '/news_upload_form_spark.html', // Añadimos el formulario de carga
   // Las URLs de las imágenes placeholder también se guardarán en caché automáticamente
   'https://cdn.tailwindcss.com' 
 ];
@@ -53,8 +54,8 @@ self.addEventListener('fetch', (event) => {
         }
         // Si no está en caché, va a la red
         return fetch(event.request).catch(() => {
-          // Si falla la red (modo offline), podrías devolver una página de error,
-          // pero como precargamos el index, no es estrictamente necesario aquí.
+          // Si falla la red (modo offline), devolver un fallback si fuera necesario
+          // Dado que el index está precargado, se espera que funcione si está offline.
         });
       })
   );
