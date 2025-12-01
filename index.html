@@ -35,7 +35,7 @@
             <p class="text-lg text-gray-600 mt-2">Noticias de Atizapán, Tlalnepantla, Naucalpan e Izcalli.</p>
             
             <!-- Enlace al formulario de carga -->
-            <a href="news_upload_form_spark.html" class="inline-block mt-4 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg shadow-md transition duration-200">
+            <a href="news_upload_form.html" class="inline-block mt-4 text-sm font-semibold text-white bg-emerald-500 hover:bg-emerald-600 px-4 py-2 rounded-lg shadow-md transition duration-200">
                 Administración (Subir Noticias)
             </a>
             <p class="text-xs text-gray-400 mt-3">ID de Usuario: <span id="userIdDisplay" class="font-mono bg-gray-100 px-1 rounded">Cargando...</span></p>
@@ -80,10 +80,21 @@
         setLogLevel('debug'); 
 
         // -----------------------------------------------------------
-        // CONFIGURACIÓN GLOBAL (Variables proporcionadas por el entorno)
+        // CONFIGURACIÓN GLOBAL (Ahora hardcodeada para evitar errores de entorno)
         // -----------------------------------------------------------
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
         const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        
+        // **INYECCIÓN DIRECTA DE LA CONFIGURACIÓN CORRECTA**
+        const firebaseConfig = {
+            apiKey: "AIzaSyBPbCmeaCd6sYJoO_9JqEWzWievDw_fFwc",
+            authDomain: "noticiaspwa-58270.firebaseapp.com",
+            projectId: "noticiaspwa-58270", // ¡CLAVE PARA RESOLVER EL ERROR!
+            storageBucket: "noticiaspwa-58270.firebasestorage.app",
+            messagingSenderId: "758477934480",
+            appId: "1:758477934480:web:10f781e64eff91b21a2d15",
+            measurementId: "G-1628F4TR27"
+        };
         
         let app;
         let auth;
@@ -103,15 +114,8 @@
         // -----------------------------------------------------------
         function initializeFirebase() {
             try {
-                const firebaseConfigString = typeof __firebase_config !== 'undefined' ? __firebase_config : '{}';
-                const firebaseConfig = JSON.parse(firebaseConfigString);
-
-                // <<<<< ESTA ES LA COMPROBACIÓN QUE FALLÓ ANTES >>>>>
-                if (!firebaseConfig || !firebaseConfig.projectId) {
-                    throw new Error('Configuración de Firebase incompleta ("projectId" no proporcionado).');
-                }
-                // <<<<< FIN DE COMPROBACIÓN >>>>>
-
+                // Ya no leemos de __firebase_config, usamos el objeto hardcodeado.
+                
                 app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
                 auth = getAuth(app); 
@@ -161,6 +165,12 @@
 
         /** Carga y muestra el contenido completo de una noticia específica. */
         async function showNewsDetailPage(newsId) {
+            // Se asume que db ya está inicializado.
+            if (!db || !userId) {
+                console.error("Base de datos no disponible.");
+                return;
+            }
+
             newsListContainer.classList.add('hidden');
             newsDetailContainer.classList.remove('hidden');
             newsDetailContainer.innerHTML = `
@@ -170,6 +180,7 @@
             `;
 
             try {
+                // Ruta para las colecciones de Firestore
                 const newsRef = doc(db, `artifacts/${appId}/users/${userId}/noticias`, newsId);
                 const docSnap = await getDoc(newsRef); 
 
@@ -226,6 +237,7 @@
         function listenForNews() {
             if (!db || !userId) return;
 
+            // Ruta para las colecciones de Firestore
             const newsCollectionRef = collection(db, `artifacts/${appId}/users/${userId}/noticias`);
             const q = query(newsCollectionRef); 
             
@@ -294,9 +306,12 @@
 
         function registerServiceWorker() {
             if ('serviceWorker' in navigator) {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('✅ Service Worker registrado con éxito:', reg.scope))
-                    .catch(error => console.error('❌ Fallo el registro del Service Worker:', error));
+                // Retraso para evitar InvalidStateError
+                setTimeout(() => {
+                    navigator.serviceWorker.register('/service-worker.js')
+                        .then(reg => console.log('✅ Service Worker registrado con éxito:', reg.scope))
+                        .catch(error => console.error('❌ Fallo el registro del Service Worker:', error));
+                }, 100); 
             } else {
                 console.warn('⚠️ Este navegador no soporta Service Workers (PWA).');
             }
@@ -306,13 +321,12 @@
         // PUNTO DE ENTRADA PRINCIPAL
         // -----------------------------------------------------------
         document.addEventListener('DOMContentLoaded', () => {
-            // 1. Registrar el service worker para la funcionalidad PWA
-            registerServiceWorker(); 
-            
-            // 2. Iniciar Firebase y la autenticación
+            // 1. Iniciar Firebase y la autenticación
             if (initializeFirebase()) {
                 setupAuthentication();
             }
+            // 2. Registrar el service worker 
+            registerServiceWorker(); 
         });
 
     </script>
